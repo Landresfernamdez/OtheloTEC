@@ -1,5 +1,5 @@
 var matriz = [[0,0,0,0,0,0],
-              [0,0,0,0,0,0],
+              [0,0,0,0,1,0],
               [0,0,1,2,0,0],
               [0,0,2,1,0,0],
               [0,0,0,0,0,0],
@@ -47,116 +47,6 @@ mostrarMatriz = function(matriz){
     }
 }
 
-validarArriba = function (matriz,x,y) {
-    
-}
-/**
- * 
- */
-movimientoValido = function (x,y,jug,dir){
-    switch (dir) {
-        case 0:console.log('arriba');
-            if (x > 0)
-                if (matriz[x-1][y] == jug | matriz[x-1][y] == 0) // arriba
-                    return false;
-            break;
-        case 1:
-            if (x < matriz.length)
-                if (matriz[x+1][y] == jug | matriz[x+1][y] == 0) // abajo
-                    return false;
-            break;
-        case 2:
-            if (y < matriz.length)
-                if (matriz[x][y+1] == jug | matriz[x][y+1] == 0) // derecha
-                    return false;
-            break;
-        case 3:
-            if (y > 0)
-                if (matriz[x][y-1] == jug | matriz[x][y-1] == 0) // izquierda
-                    return false;
-            break;
-        case 4:
-            if (x > 0 & y < matriz.length)
-                if (matriz[x-1][y+1] == jug | matriz[x-1][y+1] == 0) // derecha-arriba
-                    return false;
-            break;
-        case 5:
-            if (x < matriz.length & y < matriz.length)
-                if (matriz[x+1][y+1] == jug | matriz[x+1][y+1] == 0) // derecha-abajo
-                    return false;
-            break;
-        case 6:
-            if (x > 0 & y > 0)
-                if (matriz[x-1][y-1] == jug | matriz[x-1][y-1] == 0) // izquierda-arriba
-                    return false;
-            break;
-        case 7:
-            if (x < matriz.length & y > 0)
-                if (matriz[x+1][y-1] == jug | matriz[x+1][y-1] == 0) // izquierda-abajo
-                    return false;
-            break;
-    }
-}
-/**
- * Funcion encargada de verificar si a la derecha de la ficha que se acaba de poner hay fichas por voltear (ganadas con la jugada)
- * X de donde esta la ficha puesta
- * Y de donde esta la ficha puesta
- * jug numero de jugador que realizo la jugada
- * dir -> 0 arriba, 1 abajo, 2 derecha, 3 izquierda, 4 arriba-derecha, 5 abajo-derecha, 6 arriba-izquierda, 7 abajo-izquierda
- */
-validaMovimientos = function(x, y, jug, dir){
-    try {        
-        listaFichasNuevas.push([x,y]);
-        
-        while ((x >= 0 & ( y >= 0 | y < matriz.length)) | (x < matriz.length & ( y >= 0 | y < matriz.length))){
-            if (matriz[x][y] != jug & matriz[x][y] != 0){ // 0 significa espacio
-                listaFichasNuevas.push([x,y]);
-                switch (dir) {
-                    case 0: // arriba
-                        x--;
-                        break;
-                    case 1: // abajo
-                        x++;
-                        break;
-                    case 2: // derecha
-                        y++;
-                        break;
-                    case 3: // izquierda
-                        y--;
-                        break;
-                    case 4: // derecha-arriba
-                        x--;
-                        y++;
-                        break;
-                    case 5: // derecha-abajo
-                        x++;
-                        y++;
-                        break;
-                    case 6: // izquierda-arriba
-                        x--;
-                        y--;
-                        break;
-                    case 7: // izquierda-abajo
-                        x++;
-                        y--;
-                        break;
-                }
-            }
-            else // encontro un 0 o un jug
-                break;
-        }
-
-        if (matriz[x][y] == jug){
-            listaFichasNuevas.push([x,y]);
-            return true;
-        }
-        else
-            return false;
-
-    } catch (error) {
-        console.log('A ocurrido el siguiente error: ' + error);
-    }
-}
 
 validarArriba = function (x,y,jug,dir){ //listo
     if (x == 0){ 
@@ -204,7 +94,7 @@ validarAbajo = function (x,y,jug,dir){ //listo
         return false;
     }
 }
-validarDerecha = function (x,y,jug){ // listo
+validarDerecha = function (x,y,jug){ //listo
     if (y == matriz.length - 1){ 
         return false; // si esta en la ultima posicion no puede validar hacia abajo
     }
@@ -227,7 +117,7 @@ validarDerecha = function (x,y,jug){ // listo
         return false;
     }
 }
-validarIzquierda = function (x,y,jug,dir){ // listo
+validarIzquierda = function (x,y,jug,dir){ //listo
     if (y == 0){ 
         return false; // si esta en la ultima posicion no puede validar hacia abajo
     }
@@ -250,10 +140,30 @@ validarIzquierda = function (x,y,jug,dir){ // listo
         return false;
     }
 }
-validarArribaDerecha = function (x,y,jug,dir){
-    listaFichasNuevas.push([x,y]);
-
-    return listaFichasNuevas;    
+validarArribaDerecha = function (x,y,jug,dir){ //listo
+    if (x == 0 | y == matriz.length - 1){ 
+        return false; // si esta en la esquina derecha de arriba no puede validar porque se saldria de la matriz
+    }
+    listaFichasNuevas.push([x,y]);// primer ficha
+    x--;
+    y++;
+    while (x > 0 & y < matriz.length - 1) {
+        if (matriz[x][y] != jug & matriz[x][y] != 0) { // mientras sea la ficha del contrincante siga moviendose
+            listaFichasNuevas.push([x,y]);
+            x--;
+            y++;
+        }
+        else
+            break;      
+    }
+    if (matriz[x][y] == jug & listaFichasNuevas.length > 1){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
+        listaFichasNuevas.push([x,y]); // la ficha del jugador
+        return true;
+    }
+    else{
+        //limpiar lista
+        return false;
+    }    
 }
 validarAbajoDerecha = function (x,y,jug,dir){
     listaFichasNuevas.push([x,y]);
@@ -292,5 +202,5 @@ validarMovimiento = function(x,y,jug){
 cambiarColor = function (jug, dir) {
     
 }
-console.log(validarIzquierda(2,3,1));
+console.log(validarArribaDerecha(2,3,1));
 console.log(JSON.stringify(listaFichasNuevas));
