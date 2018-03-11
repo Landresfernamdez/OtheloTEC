@@ -292,5 +292,5 @@ validarMovimiento = function(x,y,jug){
 cambiarColor = function (jug, dir) {
     
 }
-console.log(validarIzquierda(2,4,1));
+console.log(validarIzquierda(2,3,1));
 console.log(JSON.stringify(listaFichasNuevas));
