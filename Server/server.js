@@ -12,7 +12,7 @@
 ===============================================================
 */
 var componenteCtrl = require('./Controladores/controladorComponentes'); // controlador de Componentes
-
+var funciones = require('./Logica Juego/funciones_principales');
 /*
 ===============================================================================
 >  Configuraciones principales del servidor, con esto escucha las peticiones  <
@@ -52,7 +52,8 @@ app.use(function(req, res, next) {
 >  EndPoints de los Componentes  < // bien todos
 ==================================
 */
-app.post('/insertComponente', componenteCtrl.insertComponente);
+
+app.post('/movimiento', componenteCtrl.insertComponente);
 app.get('/selectComponentes', componenteCtrl.selectComponente);
 app.put('/editComponente', componenteCtrl.editComponente);
 app.delete('/deleteComponente', componenteCtrl.deleteComponente);

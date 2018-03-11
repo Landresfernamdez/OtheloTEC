@@ -258,7 +258,8 @@ validarAbajoIzquierda = function (x,y,jug){
 }
 
 // despues de dar click viene aqui
-validarMovimiento = function(x,y,jug){
+exports.validarMovimiento = function(datos,callback){
+    var x = datos.x, y = datos.y, jug = datos.jug;
     var validas = 0;
     if (matriz[x][y] == 0) // si hay un espacio en blanco puede colochar ficha
     {
@@ -280,10 +281,23 @@ validarMovimiento = function(x,y,jug){
             validas++;
         if(validarAbajoIzquierda(x,y,jug))
             validas++;
-        if (validas == 0) 
-            return false;
-        else
-            return true;
+        if (validas == 0){
+            callback({
+                success: false,
+                title: "Error",
+                message: "Sucedio un error en la realizacion del movimiento",
+                type: "error"
+            })
+        }
+        else{
+            console.log(listaFichas);
+            callback({
+                success: true,
+                title: "Movimiento exitoso",
+                message: "Movimiento realizado",
+                type: "success"
+            })
+        }
     }
     else
         return false; // no puede jugar ahi
@@ -292,5 +306,3 @@ validarMovimiento = function(x,y,jug){
 cambiarColor = function (jug, dir) {
     
 }
-console.log(validarMovimiento(4,3,2));
-console.log(JSON.stringify(listaFichas));
