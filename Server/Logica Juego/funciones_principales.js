@@ -1,8 +1,8 @@
 var matriz = [[0,0,0,0,0,0],
-              [0,0,0,0,0,0],
+              [0,2,0,0,0,0],
               [0,0,1,2,0,0],
               [0,0,2,1,0,0],
-              [0,0,0,0,2,0],
+              [0,0,0,0,0,0],
               [0,0,0,0,0,0],], listaFichasNuevas = [];
 /**
  * Funcion encargada de convertir un string en una matriz cuadrada dependiendo de una cantidad n de elementos.
@@ -48,7 +48,7 @@ mostrarMatriz = function(matriz){
 }
 
 
-validarArriba = function (x,y,jug,dir){ //listo
+validarArriba = function (x,y,jug){ //listo
     if (x == 0){ 
         return false; // si esta en la primer posicion no puede validar hacia arriba
     }
@@ -71,7 +71,7 @@ validarArriba = function (x,y,jug,dir){ //listo
         return false;
     }
 }
-validarAbajo = function (x,y,jug,dir){ //listo
+validarAbajo = function (x,y,jug){ //listo
     if (x == matriz.length - 1){ 
         return false; // si esta en la ultima posicion no puede validar hacia abajo
     }
@@ -117,7 +117,7 @@ validarDerecha = function (x,y,jug){ //listo
         return false;
     }
 }
-validarIzquierda = function (x,y,jug,dir){ //listo
+validarIzquierda = function (x,y,jug){ //listo
     if (y == 0){ 
         return false; // si esta en la ultima posicion no puede validar hacia abajo
     }
@@ -140,7 +140,7 @@ validarIzquierda = function (x,y,jug,dir){ //listo
         return false;
     }
 }
-validarArribaDerecha = function (x,y,jug,dir){ //listo
+validarArribaDerecha = function (x,y,jug){ //listo
     if (x == 0 | y == matriz.length - 1){ 
         return false; // si esta en la esquina derecha de arriba no puede validar porque se saldria de la matriz
     }
@@ -165,7 +165,7 @@ validarArribaDerecha = function (x,y,jug,dir){ //listo
         return false;
     }    
 }
-validarAbajoDerecha = function (x,y,jug,dir){ //listo
+validarAbajoDerecha = function (x,y,jug){ //listo
     if (x == matriz.length - 1 | y == matriz.length - 1){ 
         return false; // si esta en la esquina derecha de abajo no puede validar porque se saldria de la matriz
     }
@@ -190,12 +190,32 @@ validarAbajoDerecha = function (x,y,jug,dir){ //listo
         return false;
     }
 }
-validarArribaIzquierda = function (x,y,jug,dir){
-    listaFichasNuevas.push([x,y]);
-    
-    return listaFichasNuevas;
+validarArribaIzquierda = function (x,y,jug){ //listo
+    if (x == 0 | y == 0){ 
+        return false; // si esta en la esquina izquierda de arriba no puede validar porque se saldria de la matriz
+    }
+    listaFichasNuevas.push([x,y]);// primer ficha
+    x--;
+    y--;
+    while (x > 0 & y > 0) {
+        if (matriz[x][y] != jug & matriz[x][y] != 0) { // mientras sea la ficha del contrincante siga moviendose
+            listaFichasNuevas.push([x,y]);
+            x--;
+            y--;
+        }
+        else
+            break;      
+    }
+    if (matriz[x][y] == jug & listaFichasNuevas.length > 1){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
+        listaFichasNuevas.push([x,y]); // la ficha del jugador
+        return true;
+    }
+    else{
+        //limpiar lista
+        return false;
+    }
 }
-validarAbajoIzquierda = function (x,y,jug,dir){
+validarAbajoIzquierda = function (x,y,jug){
     listaFichasNuevas.push([x,y]);
     
     return listaFichasNuevas;
@@ -222,5 +242,5 @@ validarMovimiento = function(x,y,jug){
 cambiarColor = function (jug, dir) {
     
 }
-console.log(validarAbajoDerecha(3,3,2));
+console.log(validarArribaIzquierda(4,4,2));
 console.log(JSON.stringify(listaFichasNuevas));
