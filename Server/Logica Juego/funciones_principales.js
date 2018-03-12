@@ -285,7 +285,7 @@ exports.validarMovimiento = function(datos,callback){
             callback({
                 success: false,
                 title: "Error",
-                message: "Sucedio un error en la realizacion del movimiento",
+                message: "Movimiento invalido",
                 type: "error"
             })
         }
