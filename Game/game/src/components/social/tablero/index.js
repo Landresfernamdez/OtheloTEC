@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import '../../../style/App.css';
 import '../../../style/tablero.css';
+import  axios  from 'axios';
 class Tablero extends Component{
     render(){
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         const btnStyle = {
         background:'red',
         BackgroundSize:'6em',
@@ -22,14 +24,24 @@ class Tablero extends Component{
         function handleClick(e){
             e.preventDefault();
             const  {param}=e.target.dataset;
-            alert(param);
+            axios.post('http://jsonplaceholder.typicode.com/posts', {
+                userId: '1',
+                title: 'postTitle',
+                completed: 'true'
+            })
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
         }
                 const numbers2=numbers;
                 for(var i=0;i<numbers.length;i++){
                     for(var j=0;j<numbers.length;j++){
                         if(numbers[i][j]==='0'){
                             const btnStyle0= {
-                                    background:'white',
+                                    background:'rgba(76, 175, 80, 0.3)',
                                     BackgroundSize:'6em',
                                     color:'white',
                                     height:'50px',
