@@ -5,33 +5,45 @@ import  axios  from 'axios';
 class Tablero extends Component{
     constructor(props){
         super(props);
+        this.handleClick=this.handleClick.bind(this);
         this.state = {
-            numbers: [[0,1,1,0,1,1,2,2],[0,1,1,0,1,1,2,2],[0,1,1,0,1,1,2,2],[0,1,1,0,1,1,2,2],[0,1,1,0,1,1,2,2],[0,1,1,0,1,1,2,2],[0,1,1,0,1,1,2,2],[0,1,1,0,1,1,2,2]]
-        }
-        this.handleClick= this.handleClick.bind(this);
-    }
-    handleClick(e){
-        alert(e);
-        this.setState({
-            numbers:[[0,0,0,0,0,0],
+            numbers: [[0,0,0,0,0,0],
                 [0,0,0,0,0,0],
                 [0,0,1,2,0,0],
                 [0,0,2,1,0,0],
                 [0,0,0,0,0,0],
                 [0,0,0,0,0,0]]
-          });
-    /*axios.post('http://jsonplaceholder.typicode.com/posts', {
-     userId: '1',
-     title: 'postTitle',
-     completed: 'true'
-     })
-     .then(function (response) {
-     console.log(response);
-     })
-     .catch(function (error) {
-     console.log(error);
-     });*/
-                  }
+        }
+    }
+    handleClick(e){
+        e.preventDefault();
+        const  {param}=e.target.dataset;
+        //alert(param);
+        var data=JSON.parse(param);
+        alert(data.X);
+        alert(data.Y);
+
+        var request=[[0,0,0,0,0,0],
+            [0,0,0,0,0,0],
+            [0,0,1,2,0,0],
+            [0,0,2,1,0,0],
+            [0,0,0,0,0,0],
+            [0,0,0,0,0,1]];
+        axios.post('http://172.24.108.147:8080/movimiento', {
+         x: data.X,
+         y: data.Y,
+         jug: 1
+         })
+         .then(result => {
+             console.log(result);
+             this.setState({
+                 numbers:result.data.data
+             });
+         })
+         .catch(error=> {
+         console.log(error);
+         });
+    }
     render(){
         alert("entro");
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -66,9 +78,7 @@ class Tablero extends Component{
                         cursor:'pointer',
                         boxShadow: 'inset 0 10px 15px rgba(255,255,255,.35), inset 0 -10px 15px rgba(0,0,0,.05), inset 10px 0 15px rgba(0,0,0,.05), inset -10px 0 15px rgba(0,0,0,.05), 0 5px 20px rgba(0,0,0,.1)'
                     };
-                    console.log(numbers[i][j]);
-                    console.log(btnStyle);
-                    const temporal=<td className="tablero"><button style={btnStyle0} onClick={() => this.handleClick(JSON.stringify({X:i,Y:j}))}>
+                    const temporal=<td className="tablero"><button style={btnStyle0} data-param={JSON.stringify({X:i,Y:j})} onClick={this.handleClick}>
                     </button>
                     </td>;
                     numbers2[i][j]=temporal;
@@ -86,9 +96,7 @@ class Tablero extends Component{
                         cursor:'pointer',
                         boxShadow: 'inset 0 10px 15px rgba(255,255,255,.35), inset 0 -10px 15px rgba(0,0,0,.05), inset 10px 0 15px rgba(0,0,0,.05), inset -10px 0 15px rgba(0,0,0,.05), 0 5px 20px rgba(0,0,0,.1)'
                     };
-                    console.log(numbers[i][j])
-                    console.log(btnStyle)
-                    const temporal=<td className="tablero"><button style={btnStyle1} onClick={() => this.handleClick(JSON.stringify({X:i,Y:j}))}>
+                    const temporal=<td className="tablero"><button style={btnStyle1} data-param={JSON.stringify({X:i,Y:j})} onClick={this.handleClick}>
                     </button>
                     </td>;
                     numbers2[i][j]=temporal;
@@ -106,9 +114,7 @@ class Tablero extends Component{
                         cursor:'pointer',
                         boxShadow: 'inset 0 10px 15px rgba(255,255,255,.35), inset 0 -10px 15px rgba(0,0,0,.05), inset 10px 0 15px rgba(0,0,0,.05), inset -10px 0 15px rgba(0,0,0,.05), 0 5px 20px rgba(0,0,0,.1)'
                     };
-                    console.log(numbers[i][j]);
-                    console.log(btnStyle);
-                    const temporal=<td className="tablero"><button style={btnStyle2} onClick={() => this.handleClick(JSON.stringify({X:i,Y:j}))}>
+                    const temporal=<td className="tablero"><button style={btnStyle2} data-param={JSON.stringify({X:i,Y:j})} onClick={this.handleClick}>
                     </button>
                     </td>;
                     numbers2[i][j]=temporal;
