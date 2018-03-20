@@ -6,11 +6,8 @@ import Social from './components/social/'
 import DragDrop from './components/DragDrop/'
 import Jquery from './components/Jquery/'
 import Tablero from './components/social/tablero/'
-
-
 //Import css for the application
 import './style/index.css'
-
 class App extends Component {
   render() {
     return (
@@ -22,6 +19,7 @@ class App extends Component {
             <Route path="/dnd" component={DragDrop}></Route>
             <Route path="/jquery" component={Jquery}></Route>
             <Route path="/tablero" component={Tablero}></Route>
+
         </Router>
     );
   }
