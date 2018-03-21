@@ -4,11 +4,11 @@
 ===============================================================================================
 */
 
-var consultsPreparerComponente = require('../ConsultsPreparer/consultsPreparerComponente.js');
+var consultsPreparerPartida = require('../ConsultsPreparer/consultsPreparerPartida');
 
 // inserta componentes
 exports.insertarComponente = function(datos, callback) {
-    consultsPreparerComponente.insertComponente(datos, function(response) {
+    consultsPreparerPartida.insertComponente(datos, function(response) {
         msg = (response.error == 1) ? "Error de conexión" : "No se pudo insertar el componente";
         if (response.success) {
             callback({
@@ -32,7 +32,7 @@ exports.insertarComponente = function(datos, callback) {
 
 // seleccionar componentes
 exports.seleccionarComponente = function(callback) {
-    consultsPreparerComponente.selectComponente( function(response) {
+    consultsPreparerPartida.selectComponente( function(response) {
         if (response.success) {
             msg = (response.error == 1) ? "Error de conexión" : "No se pudo seleccionar los componentes";
             callback({
@@ -51,9 +51,9 @@ exports.seleccionarComponente = function(callback) {
     });
 };
 
-// editar componentes
-exports.editarComponente = function(datos, callback) {
-    consultsPreparerComponente.editComponente(datos, function(response) {
+//inserta movimiento
+exports.insertMovimiento = function(datos, callback) {
+    consultsPreparerPartida.insertMovimiento(datos, function(response) {
         msg = (response.error === 1) ? "Error de conexión" : "No se pudo modificar el componente";
         if (response.success) {
             callback({
@@ -77,7 +77,7 @@ exports.editarComponente = function(datos, callback) {
 
 // eliminar componentes
 exports.eliminarComponente = function(datos, callback) {
-    consultsPreparerComponente.deleteComponente(datos, function(response) {
+    consultsPreparerPartida.deleteComponente(datos, function(response) {
         msg = (response.error === 1) ? "Error de conexión" : "No se puede eliminar el componente";
         if (response.success) {
             callback({
