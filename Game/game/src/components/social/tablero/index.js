@@ -7,12 +7,18 @@ class Tablero extends Component{
         super(props);
         this.handleClick=this.handleClick.bind(this);
         this.state = {
-            numbers: [[0,0,0,0,0,0],
-                [0,0,0,0,0,0],
-                [0,0,1,2,0,0],
-                [0,0,2,1,0,0],
-                [0,0,0,0,0,0],
-                [0,0,0,0,0,0]]
+            numbers: [[0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0],
+                [0,0,0,1,2,0,0,0],
+                [0,0,0,2,1,0,0,0],
+                [0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0]],
+            turno:1,
+            tipo:2,
+            nivel:3,
+            ganador:0
         }
     }
     handleClick(e){
@@ -20,8 +26,8 @@ class Tablero extends Component{
         const  {param}=e.target.dataset;
         //alert(param);
         var data=JSON.parse(param);
-        alert(data.X);
-        alert(data.Y);
+        //alert(data.X);
+       // alert(data.Y);
 
         var request=[[0,0,0,0,0,0],
             [0,0,0,0,0,0],
@@ -29,15 +35,21 @@ class Tablero extends Component{
             [0,0,2,1,0,0],
             [0,0,0,0,0,0],
             [0,0,0,0,0,1]];
-        axios.post('http://172.24.108.147:8080/movimiento', {
+        axios.post('http://localhost:8080/movimiento', {
          x: data.X,
          y: data.Y,
-         jug: 1
+         jug: this.state.turno,
+         tipo:this.state.tipo,
+         nivel:this.state.nivel
          })
          .then(result => {
-             console.log(result);
+             console.log(result.data.data.matriz);
              this.setState({
-                 numbers:result.data.data
+                 numbers:result.data.data.matriz,
+                 turno:result.data.data.turno,
+                 tipo:this.state.tipo,
+                 nivel:result.data.data.nivel,
+                 ganador:result.data.data.ganador
              });
          })
          .catch(error=> {
@@ -45,20 +57,9 @@ class Tablero extends Component{
          });
     }
     render(){
-        alert("entro");
-        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-        const btnStyle = {
-            background:'red',
-            BackgroundSize:'6em',
-            color:'red',
-            height:'75px',
-            width: '75px',
-            Display: 'table',
-            Margin: '20px auto',
-            borderRadius: '100%',
-            cursor:'pointer',
-            boxShadow: 'inset 0 10px 15px rgba(255,255,255,.35), inset 0 -10px 15px rgba(0,0,0,.05), inset 10px 0 15px rgba(0,0,0,.05), inset -10px 0 15px rgba(0,0,0,.05), 0 5px 20px rgba(0,0,0,.1)'
-        };
+        //alert("entro");
+       // <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
         const numbers =this.state.numbers;
         const colorPlayer1='red';
         const colorPlayer2='orange';
@@ -70,8 +71,8 @@ class Tablero extends Component{
                         background:'rgba(76, 175, 80, 0.3)',
                         BackgroundSize:'6em',
                         color:'white',
-                        height:'50px',
-                        width: '50px',
+                        height:50,
+                        width: 50,
                         Display: 'table',
                         Margin: '20px auto',
                         borderRadius: '100%',
@@ -88,8 +89,8 @@ class Tablero extends Component{
                         background:colorPlayer2,
                         BackgroundSize:'6em',
                         color:'red',
-                        height:'50px',
-                        width: '50px',
+                        height:50,
+                        width: 50,
                         Display: 'table',
                         Margin: '20px auto',
                         borderRadius: '100%',
@@ -106,8 +107,8 @@ class Tablero extends Component{
                         background:'blue',
                         BackgroundSize:'6em',
                         color:'red',
-                        height:'50px',
-                        width: '50px',
+                        height:50,
+                        width: 50,
                         Display: 'table',
                         Margin: '20px auto',
                         borderRadius: '100%',

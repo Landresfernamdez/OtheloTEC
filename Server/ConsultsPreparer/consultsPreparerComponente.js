@@ -50,7 +50,7 @@ exports.selectComponente = function(callback) {
 }
 
 exports.editComponente = function editComponente(datos, callback) {
-    var request = new Request('editComponente', function(err) {
+    var request = new Request('realizarMovimiento', function(err) {
         if (err) {
             callback({
                 success: false,
@@ -61,14 +61,12 @@ exports.editComponente = function editComponente(datos, callback) {
             })
         }
     });
+    //request.addParameter('ID_Partida', TYPES.Int, datos.ID);
+    //request.addParameter('Matriz', TYPES.VarChar, datos.ID_Dimension);
 
-    request.addParameter('ID_Componente', TYPES.Int, datos.ID);
-    request.addParameter('ID_Dimension', TYPES.Int, datos.ID_Dimension);
-    request.addParameter('nombreComponente', TYPES.VarChar, datos.Componente);
+   // request.addOutputParameter('success', TYPES.Bit);
 
-    request.addOutputParameter('success', TYPES.Bit);
-
-    sqlConection.callProcedure(request, callback);
+   // sqlConection.callProcedure(request, callback);
 };
 // DELETE 
 exports.deleteComponente = function deleteComponente(datos, callback) {
