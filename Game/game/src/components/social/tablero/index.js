@@ -59,7 +59,24 @@ class Tablero extends Component{
     render(){
         //alert("entro");
        // <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        var w = window.innerWidth
+            || document.documentElement.clientWidth
+            || document.body.clientWidth;
 
+        var h = window.innerHeight
+            || document.documentElement.clientHeight
+            || document.body.clientHeight;
+
+        var n=8;
+        h=h-100;
+        w=w-100;
+        var dimension=0;
+        if(h<w){
+           dimension=h/n;
+        }
+        else{
+            dimension=w/n;
+        }
         const numbers =this.state.numbers;
         const colorPlayer1='red';
         const colorPlayer2='orange';
@@ -71,8 +88,8 @@ class Tablero extends Component{
                         background:'rgba(76, 175, 80, 0.3)',
                         BackgroundSize:'6em',
                         color:'white',
-                        height:50,
-                        width: 50,
+                        height:dimension,
+                        width: dimension,
                         Display: 'table',
                         Margin: '20px auto',
                         borderRadius: '100%',
@@ -89,8 +106,8 @@ class Tablero extends Component{
                         background:colorPlayer2,
                         BackgroundSize:'6em',
                         color:'red',
-                        height:50,
-                        width: 50,
+                        height:dimension,
+                        width: dimension,
                         Display: 'table',
                         Margin: '20px auto',
                         borderRadius: '100%',
@@ -107,8 +124,8 @@ class Tablero extends Component{
                         background:'blue',
                         BackgroundSize:'6em',
                         color:'red',
-                        height:50,
-                        width: 50,
+                        height:dimension,
+                        width: dimension,
                         Display: 'table',
                         Margin: '20px auto',
                         borderRadius: '100%',
@@ -141,7 +158,8 @@ class Tablero extends Component{
         var divStyle = {
             overflowScrolling:'auto',
             overflowX:'auto',
-            overflowY:'auto'
+            overflowY:'auto',
+            textAlign:'center'
         };
         return(
             <div style={divStyle}>
