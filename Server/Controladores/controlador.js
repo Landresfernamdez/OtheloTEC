@@ -3,24 +3,24 @@
 >  Controlador de los Componentes del sistema  <
 ================================================
 */
-var logicaComponente = require('../Logica Juego/funciones_principales');
+var funciones = require('../Logica Juego/funciones_principales');
+var logicaComponente = require('../Logica/logica');
 
-exports.insertComponente = function(rRequest, rResponse){
-    console.log(rRequest.body);
-    logicaComponente.validarMovimiento(rRequest.body, function(data){
-        console.log(data)
+exports.realizarMovimiento = function(rRequest, rResponse){
+    console.log(rRequest.query)
+    funciones.validarMovimiento(rRequest.query, function(data){
         rResponse.send(data);
     })
 };
 
 exports.editComponente = function(rRequest, rResponse){
-    logicaComponente.editarComponente(rRequest.body, function(data){
+    funciones.editarComponente(rRequest.body, function(data){
         rResponse.send(data);
     });
 };
 
-exports.selectComponente = function(rRequest, rResponse){
-    logicaComponente.seleccionarComponente(function(data){
+exports.selectPartidasDisponibles = function(rRequest, rResponse){
+    logicaComponente.seleccionarPartidasDisponibles(function(data){
         rResponse.send(data.data);
     })
 };

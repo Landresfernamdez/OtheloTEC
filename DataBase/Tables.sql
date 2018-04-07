@@ -177,7 +177,7 @@ GO
 ----------------------------------------------
 USE OthelloTEC
 GO
-CREATE PROCEDURE insertPartidas -- LISTO
+CREATE PROCEDURE insertPartida -- LISTO
 	@ID_SJ				INT,
 	@MatrizJuego		VARCHAR(8000),
 	@success			BIT		OUTPUT
@@ -215,15 +215,10 @@ AS
 	END;
 GO
 
-CREATE PROCEDURE selectPartidasDisponibles -- LISTO
-	@success			BIT		OUTPUT
-AS 
-	BEGIN
-		SET @success = 0 -- error
-		SELECT @success, * FROM Partidas WHERE EstadoPartida = 1 -- pausa		
-	END;
-GO
-
+/*
+	Movimiento por parte de los jugadores, si se realiza un movimiento se guarda en la base de datos junto con todos los datos relacionados (puntos, estado de la partida, turno, etc.)
+	Retorna la partida actualizada para que de actualice la matriz de juego
+*/
 CREATE PROCEDURE editPartida -- LISTO
 	@ID					INT,
 	@Turno				INT,
@@ -238,7 +233,7 @@ AS
 		IF ((SELECT COUNT(*) FROM Partidas AS P WHERE P.ID = @ID) = 1) -- existe la partida
 			BEGIN
 				UPDATE dbo.Partidas 
-				SET ID_SJ = ID_SJ,
+				SET ID_SJ = @ID_SJ,
 				Turno = @Turno,
 				EstadoPartida = @EstadoPartida,
 				PuntosP1 = @Puntos_P1,
@@ -246,7 +241,7 @@ AS
 				MatrizJuego = @MatrizJuego
 				WHERE ID = @ID;
 				SET @success = 0 -- exito
-				SELECT @success
+				SELECT @success, * FROM Partidas WHERE ID = @ID
 			END;
 		ELSE
 			BEGIN

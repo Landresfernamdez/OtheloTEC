@@ -1,10 +1,10 @@
 {
-  "name": "AcreditacionTEC",
+  "name": "OthelloTEC",
   "config": {
     "port": "8080"
   },
   "version": "1.0.0",
-  "description": "Servidor web para el proyecto Acreditacion de carrera SINAES elavorado para la escuela de Administracion de Empresas del Tecnologico de Costa Rica",
+  "description": "Servidor web para el proyecto OthelloTEC del curso de diseño de software",
   "main": "server.js",
   "dependencies": {
     "angular": "^1.6.1",
@@ -35,7 +35,7 @@
     "WebServices",
     "app"
   ],
-  "author": "Eliomar Antonio Rodríguez Arguedas; Comunidad de Aplicaciones Moviles.",
+  "author": "Eliomar Antonio Rodríguez Arguedas;",
   "license": "ISC",
   "repository": {
     "type": "git",

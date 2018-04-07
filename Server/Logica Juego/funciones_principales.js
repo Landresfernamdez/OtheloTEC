@@ -1,3 +1,8 @@
+var logica = require('../Logica/logica');
+var Request = require('tedious').Request;
+var TYPES = require('tedious').TYPES;
+var sqlConection = require('../ConexionDBs/sqlConection');
+
 var matriz = [[0,0,0,0,0,0],
               [0,0,0,0,0,0],
               [0,0,1,2,0,0],
@@ -25,7 +30,7 @@ exports.obtenerMatriz = function (matrizString,tamanoTablero){
  * Funcion encargada de convertir de matriz cuadrada a string.
  * Ejemplo: [[a,b,c],[d,e,f],[g,h,i]] -> 'abcdefghi'
  */
-exports.obtenerString = function(matriz){
+obtenerString = function(matriz){
     var string = '';
     for (let i = 0; i < matriz.length; i++) {
         for (let j = 0; j < matriz.length; j++) {
@@ -244,6 +249,7 @@ validarAbajoIzquierda = function (x,y,jug){
 
 // despues de dar click viene aqui
 exports.validarMovimiento = function(datos,callback){
+    console.log('x: '+datos.x)
     try {        
         var x = datos.x, y = datos.y, jug = datos.jug;
         var validas = 0;
@@ -273,12 +279,12 @@ exports.validarMovimiento = function(datos,callback){
                 console.log("Entro en izquierda\n");
                 validas++;
                 cambiarColor(parseInt(datos.x),parseInt(datos.y),jug);
-                matriz = [[0,0,0,0,0,0],
+                /*matriz = [[0,0,0,0,0,0],
                           [0,0,0,0,0,0],
                           [0,0,1,2,0,0],
                           [0,0,2,1,0,0],
                           [0,0,0,0,0,0],
-                          [0,0,0,0,0,0]];
+                          [0,0,0,0,0,0]];*/
                 mostrarMatriz(matriz);
             }
             if(validarArribaDerecha(x,y,jug)){
@@ -316,21 +322,87 @@ exports.validarMovimiento = function(datos,callback){
                 })
             }
             else{
-                
-                console.log("Movimiento valido\n" + listaFichas);
-                callback({
-                    success: true,
-                    title: "Movimiento exitoso",
-                    data: matriz,
-                    message: "Movimiento realizado",
-                    type: "success"
-                })
+                var request = new Request('editPartida', function(err) {
+                    if (err) {
+                        callback({
+                            success: false,
+                            error: request.error,
+                            title: "Error",
+                            message: "Sucedio un error en la modificación de los datos",
+                            type: "error"
+                        })
+                    }
+                });
+                var temp=obtenerString(matriz);
+                console.log(datos);
+                console.log("string:"+temp);
+                request.addParameter('ID', TYPES.Int,parseInt(datos.ID));
+                request.addParameter('Turno', TYPES.Int,parseInt(datos.Turno));
+                request.addParameter('ID_SJ', TYPES.Int,parseInt(datos.ID_SJ));    
+                request.addParameter('EstadoPartida', TYPES.Int,parseInt(datos.EstadoPartida));
+                request.addParameter('Puntos_P1', TYPES.Int,parseInt(datos.Puntos_P1));
+                request.addParameter('Puntos_P2', TYPES.Int,parseInt(datos.Puntos_P2));
+                request.addParameter('MatrizJuego', TYPES.VarChar,temp);
+            
+                request.addOutputParameter('success', TYPES.Bit);
+            
+                sqlConection.callProcedure(request, function(response){
+                    console.log(response);
+                    
+                    if (response.success == 1){
+                        console.log('SIII')
+                        callback({
+                            success: true,
+                            error: response.error,
+                            title: "Good",
+                            message: 'Movimiento exitoso',
+                            data: matriz,
+                            type: "success"
+                        })
+                    }
+                    else{
+                        console.log('Fuck')
+                        callback({
+                            success: false,
+                            error: response.error,
+                            title: "Error",
+                            message: 'Movimiento invalido',
+                            data: matriz,
+                            type: "error"
+                        })
+                    }
+                });
+                /*
+
+                /*
+                logica.insertMovimiento(datos,function (response){
+                    if(response.success){
+                        callback({
+                            success: true,
+                            title: "Movimiento exitoso",
+                            data: response,
+                            message: "Movimiento realizado",
+                            type: "success"
+                        })
+                    }
+                    else{
+                        console.log("Movimiento invalido\n" + listaFichas);
+                        callback({
+                            success: false,
+                            title: "Error",
+                            message: "Movimiento invalido",
+                            data: matriz,
+                            type: "error"
+                        })
+                    }
+                });*/
             }
         }
         else
             return false; // no puede jugar ahi
     } catch (error) {
-        console.log(error.TypeError);
+        console.log('ERROR');
+        console.log(error);
     }
 }
 

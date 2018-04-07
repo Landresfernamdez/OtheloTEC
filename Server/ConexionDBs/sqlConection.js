@@ -11,7 +11,7 @@ var config = { // cambia cuando se monte en el servidor
     password: '12345',
     server: 'localhost', // direccion del servidor
     options: {
-        database: 'AcreditacionTEC',
+        database: 'OthelloTEC',
         driver: 'SQL Server Native Client 11.0',
         port: 1433,
         rowCollectionOnDone: true
@@ -164,6 +164,7 @@ exports.callProcedure = function callProcedure(request, callback) {
             connection.callProcedure(request);
         });
     } catch (error) {
+        console.log('ERROR');
         console.log(error);
     }    
 };

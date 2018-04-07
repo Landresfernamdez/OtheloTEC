@@ -4,11 +4,11 @@
 ===============================================================================================
 */
 
-var consultsPreparerPartida = require('../ConsultsPreparer/consultsPreparerPartida');
+var consultsPreparer = require('../ConsultsPreparer/consultsPreparer');
 
 // inserta componentes
 exports.insertarComponente = function(datos, callback) {
-    consultsPreparerPartida.insertComponente(datos, function(response) {
+    consultsPreparer.insertComponente(datos, function(response) {
         msg = (response.error == 1) ? "Error de conexión" : "No se pudo insertar el componente";
         if (response.success) {
             callback({
@@ -30,9 +30,9 @@ exports.insertarComponente = function(datos, callback) {
     });
 };
 
-// seleccionar componentes
-exports.seleccionarComponente = function(callback) {
-    consultsPreparerPartida.selectComponente( function(response) {
+// seleccionar partidas disponibles
+exports.seleccionarPartidasDisponibles = function(callback) {
+    consultsPreparer.selectPartidasDisponibles( function(response) {
         if (response.success) {
             msg = (response.error == 1) ? "Error de conexión" : "No se pudo seleccionar los componentes";
             callback({
@@ -51,9 +51,9 @@ exports.seleccionarComponente = function(callback) {
     });
 };
 
-//inserta movimiento
+//inserta movimiento o realiza un movimiento
 exports.insertMovimiento = function(datos, callback) {
-    consultsPreparerPartida.insertMovimiento(datos, function(response) {
+    consultsPreparer.insertMovimiento(datos, function(response) {
         msg = (response.error === 1) ? "Error de conexión" : "No se pudo modificar el componente";
         if (response.success) {
             callback({
@@ -69,30 +69,6 @@ exports.insertMovimiento = function(datos, callback) {
                 message: msg,
                 title: "Error",
                 error: response.error,
-                type: "error"
-            })
-        }
-    });
-};
-
-// eliminar componentes
-exports.eliminarComponente = function(datos, callback) {
-    consultsPreparerPartida.deleteComponente(datos, function(response) {
-        msg = (response.error === 1) ? "Error de conexión" : "No se puede eliminar el componente";
-        if (response.success) {
-            callback({
-                success: true,
-                error: response.error,
-                title: "Componente eliminado",
-                message: "Componente eliminado con éxito",
-                type: "success"
-            })
-        } else {
-            callback({
-                success: false,
-                error: response.error,
-                title: "Error",
-                message: msg,
                 type: "error"
             })
         }

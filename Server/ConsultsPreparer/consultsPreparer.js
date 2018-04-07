@@ -32,8 +32,8 @@ exports.insertComponente = function insertComponente(datos, callback) {
     });
 }
 
-exports.selectComponente = function(callback) {
-    var request = new Request("SELECT * FROM Componentes", function(err) {
+exports.selectPartidasDisponibles = function(callback) {
+    var request = new Request("SELECT * FROM Partidas ", function(err) {
         if (err) {
             callback({
                 success: false,
@@ -49,8 +49,8 @@ exports.selectComponente = function(callback) {
     sqlConection.executeRequest(request, callback); 
 }
 
-exports.editComponente = function editComponente(datos, callback) {
-    var request = new Request('realizarMovimiento', function(err) {
+exports.insertMovimiento = function insertMovimiento(datos, callback) {
+    var request = new Request('editPartida', function(err) {
         if (err) {
             callback({
                 success: false,
@@ -62,8 +62,13 @@ exports.editComponente = function editComponente(datos, callback) {
         }
     });
 
-    request.addParameter('ID_Partida', TYPES.Int, datos.ID);
-    request.addParameter('Matriz', TYPES.VarChar, datos.ID_Dimension);
+    request.addParameter('ID', TYPES.Int, datos.ID);
+    request.addParameter('Turno', TYPES.Int, datos.Turno);
+    request.addParameter('ID_SJ', TYPES.Int, datos.ID_SJ);    
+    request.addParameter('EstadoPartida', TYPES.Int, datos.EstadoPartida);
+    request.addParameter('Puntos_P1', TYPES.Int, datos.Puntos_P1);
+    request.addParameter('Puntos_P2', TYPES.Int, datos.Puntos_P2);
+    //request.addParameter('MatrizJuego', TYPES.Int, datos.Matriz);
 
     request.addOutputParameter('success', TYPES.Bit);
 

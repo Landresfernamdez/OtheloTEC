@@ -11,8 +11,7 @@
 >  Archivos donde estan los controladores en el servidor.     <
 ===============================================================
 */
-var componenteCtrl = require('./Controladores/controladorComponentes'); // controlador de Componentes
-var funciones = require('./Logica Juego/funciones_principales');
+var gameCtrl = require('./Controladores/controlador'); // controlador del juego
 /*
 ===============================================================================
 >  Configuraciones principales del servidor, con esto escucha las peticiones  <
@@ -48,15 +47,14 @@ app.use(function(req, res, next) {
  * delete   delete
  */
 /*
-==================================
->  EndPoints de los Componentes  < // bien todos
-==================================
+========================================
+>  EndPoints necesarios para el juego  < // bien todos
+========================================
 */
-
-app.post('/movimiento', componenteCtrl.insertComponente);
-app.get('/selectComponentes', componenteCtrl.selectComponente);
-app.put('/editComponente', componenteCtrl.editComponente);
-app.delete('/deleteComponente', componenteCtrl.deleteComponente);
+app.post('/movimiento', gameCtrl.realizarMovimiento);
+app.get('/selectPartidasDisponibles', gameCtrl.selectPartidasDisponibles);
+app.post('/editComponente', gameCtrl.editComponente);
+app.post('/deleteComponente', gameCtrl.deleteComponente);
 
 /*
 ======================================================================================
