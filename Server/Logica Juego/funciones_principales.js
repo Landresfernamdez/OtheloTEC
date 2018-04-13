@@ -679,11 +679,11 @@ exports.validarMovimiento = function(datos,callback){
             }
         }
         else if(datos.tipo == 3){ // PC vs PC
-            
+            console.log('Estoy en nivel 3 de dificultad.');
         }      
     } catch (error) {
-        console.log('ERROR: ');
-        console.log(error);
+        console.error('ERROR: ');
+        console.error(error);
     }
 }
 
