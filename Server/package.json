@@ -27,12 +27,9 @@
     "start": "node server.js"
   },
   "keywords": [
-    "TEC",
-    "Acreditacion",
-    "Administracion",
-    "SINAES",
     "NodeJS",
     "WebServices",
+    "Othello",
     "app"
   ],
   "author": "Eliomar Antonio Rodríguez Arguedas;",
