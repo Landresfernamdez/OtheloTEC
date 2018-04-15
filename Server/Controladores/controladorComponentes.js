@@ -3,28 +3,40 @@
 >  Controlador de los Componentes del sistema  <
 ================================================
 */
-var logicaComponente = require('../Logica Juego/funciones_principales');
+var logicaFunciones = require('../Logica Juego/funciones_principales');
 
-exports.insertComponente = function(rRequest, rResponse){
+var controlador = require('../Logica/logicaComponentes');
+
+exports.realizarMovimiento = function(rRequest, rResponse){
     //console.log(rRequest.body);
-    logicaComponente.validarMovimiento(rRequest.body, function(data){
+    logicaFunciones.validarMovimiento(rRequest.body, function(data){
         //console.log(data)
         rResponse.send(data);
     })
 };
-
-exports.editComponente = function(rRequest, rResponse){
-    logicaComponente.editarComponente(rRequest.body, function(data){
+exports.login = function(rRequest, rResponse){
+    controlador.login(rRequest.body, function(data){
+        console.log(data);
         rResponse.send(data);
     });
 };
-
+exports.validaCorreo = function(rRequest, rResponse){
+    controlador.validaCorreo(rRequest.body, function(data){
+        console.log(data);
+        rResponse.send(data);
+    });
+};
+exports.insertarUsuario = function(rRequest, rResponse){
+    controlador.insertarUsuario(rRequest.body, function(data){
+        console.log(data);
+        rResponse.send(data);
+    });
+};
 exports.selectComponente = function(rRequest, rResponse){
     logicaComponente.seleccionarComponente(function(data){
         rResponse.send(data.data);
     })
 };
-
 exports.deleteComponente = function(rRequest, rResponse){
     logicaComponente.eliminarComponente(rRequest.body, function(data){
         rResponse.send(data);

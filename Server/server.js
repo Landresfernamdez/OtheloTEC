@@ -12,7 +12,6 @@
 ===============================================================
 */
 var componenteCtrl = require('./Controladores/controladorComponentes'); // controlador de Componentes
-var funciones = require('./Logica Juego/funciones_principales');
 /*
 ===============================================================================
 >  Configuraciones principales del servidor, con esto escucha las peticiones  <
@@ -28,7 +27,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(bodyParser.json());
 
-app.use('/', express.static(__dirname + '/"Web Services"'));
+app.use('/', express.static(__dirname + '/"Server"'));
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -53,11 +52,12 @@ app.use(function(req, res, next) {
 ==================================
 */
 
-app.post('/movimiento', componenteCtrl.insertComponente);
+app.post('/movimiento', componenteCtrl.realizarMovimiento);
 app.get('/selectComponentes', componenteCtrl.selectComponente);
-app.put('/editComponente', componenteCtrl.editComponente);
-app.delete('/deleteComponente', componenteCtrl.deleteComponente);
-
+//app.post('/deleteComponente', componenteCtrl.deleteComponente);
+app.post('/Login',componenteCtrl.login);
+app.post('/validaCorreo',componenteCtrl.validaCorreo);
+app.post('/insertarUsuario',componenteCtrl.insertarUsuario);
 /*
 ======================================================================================
 >  Pone el servidor en escucha de peticiones, lo levanta en el puerto especificado.  <

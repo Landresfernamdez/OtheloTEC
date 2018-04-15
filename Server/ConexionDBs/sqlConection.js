@@ -8,10 +8,10 @@ var Connection = require('tedious').Connection; // libreria necesaria para conec
 */
 var config = { // cambia cuando se monte en el servidor
     userName: 'sa',
-    password: '12345',
+    password: '86374844botas',
     server: 'localhost', // direccion del servidor
     options: {
-        database: 'AcreditacionTEC',
+        database: 'OthelloTEC',
         driver: 'SQL Server Native Client 11.0',
         port: 1433,
         rowCollectionOnDone: true

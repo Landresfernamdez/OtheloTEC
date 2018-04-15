@@ -348,7 +348,8 @@ validarArribaDerecha = function (x,y,jug){
         else
             break;      
     }
-    if (matriz[x][y] == jug & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
+    if 
+    (matriz[x][y] == jug & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichas = listaFichasNuevas;
         return true;
     }
@@ -645,6 +646,7 @@ function devuelveFichasPC(jugador){
  * @returns {boolean}
  */
 function fichasJugadorXtienenJugada(fichasPC,jugador){
+    console.log(fichasPC);
     for(var i=0;i<fichasPC.length;i++){
         var x = fichasPC[i].x, y = fichasPC[i].y, jug = jugador;
         //validar todas las direcciones
@@ -897,7 +899,6 @@ exports.validarMovimiento = function(datos,callback){
                                     console.log("prueba");
                                     if(fichasJugadorXtienenJugada(fichasPC,2)){
                                         ///Juego de la computadora
-
                                         posiblesJugadas(fichasPC);//Almacena las posibles jugadas de la PC
                                         console.log("prueba");
                                         //console.log("Tamano:"+jugadas.length);
@@ -951,7 +952,6 @@ exports.validarMovimiento = function(datos,callback){
                                             }
                                             //Si la IA tiene movimientos posibles entonces.....
                                             //console.log("Movimiento valido\n" + listaFichas);
-
                                             callback({
                                                 success: true,
                                                 title: "Movimiento exitoso",

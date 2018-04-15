@@ -7,15 +7,62 @@
 var consultsPreparerPartida = require('../ConsultsPreparer/consultsPreparerPartida');
 
 // inserta componentes
-exports.insertarComponente = function(datos, callback) {
-    consultsPreparerPartida.insertComponente(datos, function(response) {
-        msg = (response.error == 1) ? "Error de conexión" : "No se pudo insertar el componente";
+exports.login = function(datos, callback) {
+    consultsPreparerPartida.login(datos, function(response) {
+        msg = (response.error == 1) ? "Error de conexión" : "Credenciales incorrectas";
         if (response.success) {
             callback({
                 success: true,
                 error: response.error,
-                title: "Componente agregado",
-                message: "Componente agregado con exito",
+                title: "El usuario existe",
+                message: "El usuario existe en la base de datos",
+                data: response.data,
+                type: "success"
+            })
+        } else {
+            callback({
+                success: false,
+                message: msg,
+                title: "Error",
+                error: response.error,
+                type: "error"
+            })
+        }
+    });
+};
+exports.validaCorreo = function(datos, callback) {
+    consultsPreparerPartida.validaCorreo(datos, function(response) {
+        msg = (response.error == 1) ? "Error de conexión" : "Credenciales incorrectas";
+        if (response.success) {
+            callback({
+                success: true,
+                error: response.error,
+                title: "El usuario existe",
+                message: "El usuario existe en la base de datos",
+                data: response.data,
+                type: "success"
+            })
+        } else {
+            callback({
+                success: false,
+                message: msg,
+                title: "Error",
+                error: response.error,
+                type: "error"
+            })
+        }
+    });
+};
+exports.insertarUsuario = function(datos, callback) {
+    consultsPreparerPartida.insertarUsuario(datos, function(response) {
+        msg = (response.error == 1) ? "Error de conexión" : "Credenciales incorrectas";
+        if (response.success) {
+            callback({
+                success: true,
+                error: response.error,
+                title: "Se inserto con exito",
+                message: "Se inserto en la base de datos con exito",
+                data: response.data,
                 type: "success"
             })
         } else {
