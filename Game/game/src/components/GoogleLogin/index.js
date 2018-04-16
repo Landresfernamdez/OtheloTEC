@@ -1,25 +1,11 @@
 import React, { Component } from 'react';
 import  axios  from 'axios';
 import 'react-addons-transition-group';
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" ></link>;
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"></link>;
-<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>;
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>;
 import { Form,FormGroup,Col,ControlLabel,FormControl,Button,Row ,Image,Modal} from 'react-bootstrap';
 //Assets
 import google from './google.png';
 import logo from './logo.png';
 import config from './config';
-import alertify from './alertify/css/alertify.css';
-<html>
-<head>
-<script src="./alertify/alertify.js"></script>;
-<link rel="stylesheet" type="text/css" href="./alertify/css/alertify.css"></link>;
-<link rel="stylesheet" type="text/css" href="./alertify/css/themes/default.css"></link>;
-</head>
-<body>
-</body>
-</html>
 //const { Alertify } = require('react-alertify-js')
 // place where you'd like in your app 
 //module.exports = () => <Alertify />;
@@ -93,6 +79,8 @@ class GoogleLogin extends Component{
                             .then(result => {
                                 console.log(result);
                                 if(result.data.success==true){
+                                    localStorage.setItem("correo", e.emails[0].value);
+                                    window.location.href=window.location.href+'menu';
                                     alert("Bienvenido");
                                 }
                                 else{ 
@@ -117,6 +105,8 @@ class GoogleLogin extends Component{
             .then(result => {
                 console.log(result);
                 if(result.data.success==true){
+                    localStorage.setItem("correo", this.state.correo);
+                    window.location.href=window.location.href+'menu';
                     alert("Bienvenido");
                 }
                 else{
@@ -138,7 +128,9 @@ class GoogleLogin extends Component{
                                             .then(result => {
                                                 console.log(result);
                                                 if(result.data.success==true){
-                                                    alert("Se ha insertado con exito");
+                                                    localStorage.setItem("correo", this.state.correo);
+                                                    alert("Se ha registrado con exito");
+                                                    window.location.href=window.location.href+'menu';
                                                 }
                                                 else{
                                                     alert("Sucedio un error y no se inserto");

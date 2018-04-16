@@ -5,19 +5,17 @@ import { IndexRoute, Router, Route, browserHistory, Link } from 'react-router'
 import Tablero from './components/tablero/'
 import GoogleLogin from './components/GoogleLogin/'
 import Menu from './components/menu'
-import Social from './components/index'
 //Import css for the application
 import './style/index.css'
 class App extends Component {
   render() {
     return (
         <Router history={browserHistory}>
-            <Route path="/" Component={Social}>
-                <IndexRoute title="Tutorial" component={Social} />
+            <Route path="/" Component={GoogleLogin}>
+                <IndexRoute title="Tutorial" component={GoogleLogin} />
             </Route>
-            <Route path="/social" component={Menu}></Route>
+            <Route path="/menu" component={Menu}></Route>
             <Route path="/tablero" component={Tablero}></Route>
-            <Route path="/LoginGmail" component={GoogleLogin}></Route>
         </Router>
     );
   }

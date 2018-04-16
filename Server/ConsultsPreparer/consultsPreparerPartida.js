@@ -14,7 +14,7 @@ var sqlConection = require('../ConexionDBs/sqlConection.js');
 //Valida si existe el usuario con su correo y contraseña
 exports.login = function login(datos, callback) {
     var request = new Request('selectUsuario', function(err) { // nombre de procedimiento en la base de datos
-        if (err) {
+        if (err){
             callback({
                 success: false,
                 error: request.error,
@@ -68,6 +68,33 @@ exports.insertarUsuario = function insertarUsuario(datos, callback) {
     request.addParameter('Correo', TYPES.VarChar, datos.correo);
     request.addParameter('Nickname', TYPES.VarChar, datos.nickname);
     request.addParameter('Contrasena', TYPES.VarChar, datos.clave);
+    request.addOutputParameter('success', TYPES.Bit);
+    sqlConection.callProcedure(request, function(res) {
+        console.log("prueba");
+        console.log(res);
+        callback(res);
+    });
+}
+
+exports.insertarSesion = function insertarSesion(datos, callback) {
+    var request = new Request('insertSesionJuego', function(err) { // nombre de procedimiento en la base de datos
+        if (err) {
+            callback({
+                success: false,
+                error: request.error,
+                title: "Error",
+                message: "Sucedio un error en la inserción de los datos",
+                type: "error"
+            })
+        }
+    });
+    console.log(datos);
+    request.addParameter('NumPartidas', TYPES.Int, datos.partidas);
+    request.addParameter('N_Tablero', TYPES.Int, datos.n);
+    request.addParameter('NivelDificultad', TYPES.Int, datos.nivel);
+    request.addParameter('TipoPartida', TYPES.Int, datos.tipo);
+    request.addParameter('IdUsuario', TYPES.VarChar, datos.correo);
+    request.addParameter('colorFicha', TYPES.VarChar, datos.color);
     request.addOutputParameter('success', TYPES.Bit);
     sqlConection.callProcedure(request, function(res) {
         console.log("prueba");

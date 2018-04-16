@@ -3,36 +3,163 @@
  */
 import React, { Component } from 'react';
 import 'react-addons-transition-group';
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" ></link>;
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"></link>;
-<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>;
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>;
-import {Tabs,Tab} from 'react-bootstrap';
+import {Tabs,Tab,FormControl} from 'react-bootstrap';
+import GoogleLogin from '.././GoogleLogin/index';
+import "./index.css";
+import axios from 'axios';
+import othrules2 from './othrules2.gif';
+import othrules3 from './othrules3.gif';
+import othrules4 from './othrules4.gif';
+import othrules5 from './othrules5.gif';
+import othrules6 from './othrules6.gif';
+import {
+    Route,
+    NavLink,
+    HashRouter
+  } from "react-router-dom";
 class  Menu extends  Component{
+    constructor(props){
+        super(props)
+    }
+    handleSelect=(selectedKey)=>{
+        alert(`selected ${selectedKey}`);
+         }
+    insertSession=()=>{
+        var partidas=document.getElementById("inpPartidas").value;
+        var n=document.getElementById("inputN").value;
+        var color=document.getElementById("colorFicha").value;
+        var tipo=document.getElementById("seltipo").value;
+        var nivel=document.getElementById("selnivel").value;
+        if(tipo=="Multiplayer"){
+            tipo=2;
+        }
+        if(tipo=="Individual game"){
+            tipo=1;
+        }
+        if(tipo=="PC vs PC"){
+            tipo=3;
+        }
+        var correo=localStorage.getItem("correo");
+        axios.post('http://localhost:8080/agregarSesion',{
+                                            correo:correo,
+                                            partidas:partidas,
+                                            n:n,
+                                            color:color,
+                                            tipo:tipo,
+                                            nivel:nivel
+                                            })
+                                            .then(result => {
+                                                console.log(result);
+                                                if(result.data.success==true){
+                                                    alert("The session was create with success");
+                                                }
+                                                else{
+                                                    alert("Sucedio un error y no se inserto");
+                                                    }
+                                                }
+                                            )
+                                            .catch(error=> {
+                                            console.log(error);
+                                            });
+
+    }     
     render(){
+        const divS={textAlign:'justify'
+                    ,marginLeft:'15%',
+                    marginRight:'15%',
+                    background:'white'
+                }
+        const divS1={textAlign:'justify'
+                    ,marginLeft:'30%',
+                    marginRight:'15%',
+                    background:'white',
+                    display:'block',
+                    marginTop:'15%'
+                }
         return(
-            <html lang="en">
+            
+            <html>
                     <head>
+                    <title>Othello TEC</title>    
                     <meta charset="UTF-8"></meta>
-                    <title> S3 Infrequent Access Calculator</title>
+                    
+                    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+                    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
                     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"></link>
                     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
                     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
                     </head>
                     <body>
-                        <Tabs defaultActiveKey={2} id="uncontrolled-tab-example">
-                        <Tab eventKey={1} title="Create sessions">
-                            Tab 1 content
+                    <Tabs defaultActiveKey={2} id="uncontrolled-tab-example">
+                        <Tab eventKey={1} title="Roules about othello">
+                        <div style={divS}>
+                        <h1>Rules in othello</h1>
+                        <p>1. Black always moves first. 
+                        </p><p>2. If on your turn you cannot outflank and flip at least one opposing 
+                        disc, your turn is forfeited and your opponent moves again. However, if a 
+                        move is available to you, you may not forfeit your turn. 
+                        </p><p>3. A disc may outflank any number of discs in one or more rows in any 
+                        number of directions at the same time - horizontally, vertically or 
+                        diagonally. (A row is defined as one or more discs <i>in a continuous 
+                        straight line </i>). See Figures 2 and 3. 
+                        </p>
+                        <p><img height="131" src={othrules2} width="174"></img> Figure 2 
+                        <img height="131" src={othrules3} width="171"></img> Figure 3 
+                        </p>
+                        <p>4. You may not skip over your own colour disc to outflank an opposing 
+                        disc. (See Figure 4). 
+                        </p><p><img height="130" src={othrules4} width="206"></img> Figure 4 
+                        </p><p>5. Discs may only be outflanked as a direct result of a move and must 
+                        fall in the direct line of the disc placed down. (See Figure 5 and 6). 
+                        </p><p><img height="131" src={othrules5} width="184"></img> Figure 5 
+                        <img height="130" src={othrules6} width="219"></img> Figure 6 
+                        </p><p>6. All discs outflanked in any one move must be flipped, even if it is 
+                        to the player's advantage not to flip them at all. 
+                        </p><p>7. A player who flips a disc which should not have been turned may 
+                        correct the mistake as long as the opponent has not made a subsequent 
+                        move. If the opponent has already moved, it is too late to change and the 
+                        disc(s) remain as is. 
+                        </p><p>8. Once a disc is placed on a square, it can never be moved to another 
+                        square later in the game. 
+                        </p><p>9. If a player runs out of discs, but still has an opportunity to 
+                        outflank an opposing disc on his or her turn, the opponent must give the 
+                        player a disc to use. (This can happen as many times as the player needs 
+                        and can use a disc). 
+                        </p><p>10. When it is no longer possible for either player to move, the game 
+                        is over. Discs are counted and the player with the majority of his or her 
+                        colour discs on the board is the winner. 
+                        </p>
+                        </div>
                         </Tab>
-                        <Tab eventKey={2} title="Sessions avaible">
-                            Tab 2 content
+                        <Tab eventKey={2} title="Create session">
+                           <div style={divS1}> 
+                           <b>Select the number of games</b><input type="number" min="1" id="inpPartidas"></input><br></br>
+                           <b>Select the N of the board</b><input type="number" min="1"id="inputN"></input><br></br>
+                           <b>Select the color of your game piece</b><input type="color" id="colorFicha"></input><br></br>
+                           <b>Select the type of game</b><select class="form-control" id="seltipo">
+                            <option>Multiplayer</option>
+                            <option>Individual game</option>
+                            <option>PC vs PC</option>
+                           </select><br></br>
+                           <b>Select the level   </b><select class="form-control" id="selnivel">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                           </select><br></br>
+                            <button type="button" class="btn btn-primary" onClick={this.insertSession}>Crear sesion de juego</button>
+                           </div>
                         </Tab>
-                        <Tab eventKey={3} title="My sessions" disabled>
-                            Tab 3 content
+                        <Tab eventKey={3} title="My sessions" >
+                            
                         </Tab>
-                        </Tabs>
-                    </body>
-                    </html>
+                        <Tab eventKey={3} title="Sessions avaible" >
+                            
+                        </Tab>
+                    </Tabs>
+                        </body>
+                        </html>
         )
     }
-}
+    }
+export default Menu;

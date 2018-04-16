@@ -16,7 +16,6 @@ CREATE TABLE SesionesJuego
 	Estado				INT				NOT NULL	DEFAULT 0, -- estado de la partida(0 pendiente, 1 fin)
 	NumPartidas			INT				NOT NULL, -- numero de partidas
 	N_Tablero			INT				NOT NULL, -- tamanio del tablero
-	ColorFondo			VARCHAR(10)		NOT NULL, -- color del fondo del tablero
 	NivelDificultad		INT,					  -- facil, medio, dificil un # para cada uno
 	TipoPartida			INT				NOT NULL, -- tipo de partidas (vsUsuario, vsPC, PCvsPC)
 	
@@ -150,14 +149,15 @@ GO
 CREATE PROCEDURE insertSesionJuego -- LISTO
 	@NumPartidas		INT,
 	@N_Tablero			INT,
-	@ColorFondo			VARCHAR(10),
 	@NivelDificultad	INT,
 	@TipoPartida		INT,
+	@IdUsuario VARCHAR(200),
+	@colorFicha VARCHAR(200),
 	@success			BIT		OUTPUT
 AS 
 	BEGIN
 		IF ((SELECT COUNT(*) FROM dbo.SesionesJuego AS SJ WHERE SJ.NumPartidas = @NumPartidas AND 
-																SJ.N_Tablero = @N_Tablero AND SJ.ColorFondo = @ColorFondo AND 
+																SJ.N_Tablero = @N_Tablero  AND 
 																SJ.NivelDificultad = @NivelDificultad AND SJ.TipoPartida = @TipoPartida) = 1) -- ya existe el registro
 			BEGIN
 				SET @success = 0 -- error
@@ -165,7 +165,12 @@ AS
 			END;
 		ELSE
 			BEGIN
-				INSERT INTO dbo.SesionesJuego(NumPartidas,N_Tablero,ColorFondo,NivelDificultad,TipoPartida) VALUES (@NumPartidas,@N_Tablero,@ColorFondo,@NivelDificultad,@TipoPartida);
+				INSERT INTO dbo.SesionesJuego(NumPartidas,N_Tablero,NivelDificultad,TipoPartida) VALUES (@NumPartidas,@N_Tablero,@NivelDificultad,@TipoPartida);
+				DECLARE @IDS INT;
+				SET @IDS =(SELECT SCOPE_IDENTITY());
+				DECLARE @IDU INT;
+				SET @IDU=(SELECT ID from Usuarios where Correo=@IdUsuario);
+				INSERT INTO dbo.Usuarios_SesionJuego (ID_SJ,ID_Usuario,ColorFicha) VALUES (@IDS,@IDU,@colorFicha);
 				SET @success = 1 -- exito
 				SELECT @success
 			END;			

@@ -32,6 +32,12 @@ exports.insertarUsuario = function(rRequest, rResponse){
         rResponse.send(data);
     });
 };
+exports.insertarSesion = function(rRequest, rResponse){
+    controlador.insertarSesion(rRequest.body, function(data){
+        console.log(data);
+        rResponse.send(data);
+    });
+};
 exports.selectComponente = function(rRequest, rResponse){
     logicaComponente.seleccionarComponente(function(data){
         rResponse.send(data.data);

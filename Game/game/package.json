@@ -9,6 +9,7 @@
     "elemental": "^0.6.1",
     "jquery": "^3.2.1",
     "lodash": "2.4.1",
+    "prop-types": "^15.6.1",
     "react": "^15.2.1",
     "react-addons-transition-group": "^15.6.2",
     "react-alertify-js": "0.0.1",
@@ -16,6 +17,7 @@
     "react-dom": "^15.2.1",
     "react-reorder": "^3.0.0-alpha.0",
     "react-router": "^2.8.1",
+    "react-router-dom": "^4.2.2",
     "react-social-login": "^3.4.2",
     "wrench": "1.5.4",
     "xml2js": "0.4.1"
