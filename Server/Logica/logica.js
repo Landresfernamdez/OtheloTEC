@@ -74,3 +74,51 @@ exports.insertMovimiento = function(datos, callback) {
         }
     });
 };
+
+
+exports.registrarSesionJuego = function(datos, callback) {
+    consultsPreparer.registrarSesionJuego(datos, function(response) {
+        msg = (response.error === 1) ? "Error de conexión" : "No se pudo registrar la sesion de juego";
+        if (response.success) {
+            callback({
+                success: true,
+                error: response.error,
+                title: "Sesion de juego registrada",
+                message: "Sesion de juego registrada con exito",
+                type: "success"
+            })
+        } else {
+            callback({
+                success: false,
+                message: msg,
+                title: "Error",
+                error: response.error,
+                type: "error"
+            })
+        }
+    });
+};
+
+
+exports.insertPartida = function(datos, callback) {
+    consultsPreparer.insertPartida(datos, function(response) {
+        msg = (response.error === 1) ? "Error de conexión" : "No se pudo registrar la sesion de juego";
+        if (response.success) {
+            callback({
+                success: true,
+                error: response.error,
+                title: "Sesion de juego registrada",
+                message: "Sesion de juego registrada con exito",
+                type: "success"
+            })
+        } else {
+            callback({
+                success: false,
+                message: msg,
+                title: "Error",
+                error: response.error,
+                type: "error"
+            })
+        }
+    });
+};

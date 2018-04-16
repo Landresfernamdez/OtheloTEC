@@ -148,16 +148,18 @@ exports.callProcedure = function callProcedure(request, callback) {
                 connection.close();
                 console.log(res);
                 if (parameterName === 'success' && (value === 1 || value === true)) {
+                    console.log('RESPUESTA');
+                    console.log(res[0]);
                     callback({
                         success: true,
-                        data: res,
-                        error:200
+                        data: res[0],
+                        error: 200
                     });
                 } else {
                     callback({
                         success: false,
                         data: [],
-                        error:400
+                        error: 400
                     });
                 };
             });

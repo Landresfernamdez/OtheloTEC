@@ -8,7 +8,7 @@
 =================================================
 
 ===============================================================
->  Archivos donde estan los controladores en el servidor.     <
+>    Archivos donde estan las funcionalidades del juego.      <
 ===============================================================
 */
 var gameCtrl = require('./Controladores/controlador'); // controlador del juego
@@ -27,7 +27,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(bodyParser.json());
 
-app.use('/', express.static(__dirname + '/"Web Services"'));
+app.use('/', express.static(__dirname + '/"Server"'));
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -46,15 +46,15 @@ app.use(function(req, res, next) {
  * put  edit
  * delete   delete
  */
-/*
+/*hola
 ========================================
 >  EndPoints necesarios para el juego  < // bien todos
 ========================================
 */
 app.post('/movimiento', gameCtrl.realizarMovimiento);
 app.get('/selectPartidasDisponibles', gameCtrl.selectPartidasDisponibles);
-app.post('/editComponente', gameCtrl.editComponente);
-app.post('/deleteComponente', gameCtrl.deleteComponente);
+app.post('/insertSesionJuego', gameCtrl.registrarSesionJuego);
+app.post('/insertPartida', gameCtrl.insertPartida);
 
 /*
 ======================================================================================

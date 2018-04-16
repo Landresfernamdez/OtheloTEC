@@ -74,11 +74,11 @@ exports.insertMovimiento = function insertMovimiento(datos, callback) {
 
     sqlConection.callProcedure(request, callback);
 };
-// DELETE 
-exports.deleteComponente = function deleteComponente(datos, callback) {
-    var request = new Request('deleteComponente', function(err) {
+
+exports.registrarSesionJuego = function registrarSesionJuego(datos, callback) {
+    var request = new Request('insertSesionJuego', function(err) {
         if (err) {
-            msg = (request.error == 1) ? "Error de conexión" : "No se puede eliminar el componente";
+            msg = (request.error == 1) ? "Error de conexión" : "No se puede insertar la sesion de juego";
             callback({
                 success: false,
                 data: err,
@@ -89,7 +89,34 @@ exports.deleteComponente = function deleteComponente(datos, callback) {
             })
         }
     });
-    request.addParameter('ID_Componente', TYPES.Int, datos.ID);
+    request.addParameter('NumPartidas', TYPES.Int, datos.NumPartidas);
+    request.addParameter('N_Tablero', TYPES.Int, datos.NTablero);
+    request.addParameter('ColorFondo', TYPES.VarChar, datos.ColorFondo);
+    request.addParameter('NivelDificultad', TYPES.Int, datos.Dificultad);    
+    request.addParameter('TipoPartida', TYPES.Int, datos.TipoPartida);
+    
+    request.addOutputParameter('success', TYPES.Bit);
+
+    sqlConection.callProcedure(request, callback);
+}
+
+exports.insertPartida = function insertPartida(datos, callback) {
+    var request = new Request('insertPartida', function(err) {
+        if (err) {
+            msg = (request.error == 1) ? "Error de conexión" : "No se puede insertar la sesion de juego";
+            callback({
+                success: false,
+                data: err,
+                error: request.error,
+                title: "Error",
+                message: msg,
+                type: "error"
+            })
+        }
+    });
+    //console.log(datos.MatrizJuego);
+    request.addParameter('ID_SJ', TYPES.Int, datos.ID_SJ);
+    request.addParameter('MatrizJuego', TYPES.VarChar, datos.MatrizJuego);
     
     request.addOutputParameter('success', TYPES.Bit);
 
