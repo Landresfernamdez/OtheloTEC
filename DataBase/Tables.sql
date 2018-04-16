@@ -39,11 +39,11 @@ CREATE TABLE Usuarios_SesionJuego
 CREATE TABLE Partidas 
 (
 	ID					INT IDENTITY,
-	ID_SJ				INT,
-	PuntosP1			INT				NOT NULL	DEFAULT 0,
-	PuntosP2			INT				NOT NULL	DEFAULT 0,
-	Turno				INT				NOT NULL	DEFAULT 0,
-	EstadoPartida		INT				NOT NULL	DEFAULT 0,
+	ID_SJ				INT				NOT NULL,
+	PuntosP1			INT				NOT NULL	DEFAULT 2,
+	PuntosP2			INT				NOT NULL	DEFAULT 2,
+	Turno				INT				NOT NULL	DEFAULT 1,
+	EstadoPartida		INT				NOT NULL	DEFAULT 0, --(0 perdiente 1 fin)
 	MatrizJuego			VARCHAR(8000)	NOT NULL,
 	
 	CONSTRAINT PK_Partidas_ID PRIMARY KEY CLUSTERED (ID),
@@ -177,7 +177,7 @@ GO
 ----------------------------------------------
 USE OthelloTEC
 GO
-CREATE PROCEDURE insertPartida -- LISTO
+CREATE PROCEDURE insertPartida -- creacion de partida una vez iniciado el juego
 	@ID_SJ				INT,
 	@MatrizJuego		VARCHAR(8000),
 	@success			BIT		OUTPUT
@@ -190,9 +190,17 @@ AS
 			END;
 		ELSE
 			BEGIN
-				INSERT INTO Partidas (ID_SJ, MatrizJuego) VALUES (@ID_SJ, @MatrizJuego);
-				SET @success = 1 -- exito
-				SELECT @success
+				IF ((SELECT COUNT(*) FROM SesionesJuego AS S WHERE S.ID = @ID_SJ) = 1)
+					BEGIN
+						INSERT INTO Partidas (ID_SJ, MatrizJuego) VALUES (@ID_SJ, @MatrizJuego);
+						SET @success = 1 -- exito
+						SELECT @success
+					END
+				ELSE
+					BEGIN
+						SET @success = 0 -- error
+						SELECT @success
+					END
 			END;			
 	END;
 GO
@@ -232,21 +240,27 @@ AS
 	BEGIN
 		IF ((SELECT COUNT(*) FROM Partidas AS P WHERE P.ID = @ID) = 1) -- existe la partida
 			BEGIN
-				UPDATE dbo.Partidas 
-				SET ID_SJ = @ID_SJ,
-				Turno = @Turno,
-				EstadoPartida = @EstadoPartida,
-				PuntosP1 = @Puntos_P1,
-				PuntosP2 = @Puntos_P2,
-				MatrizJuego = @MatrizJuego
-				WHERE ID = @ID;
-				SET @success = 0 -- exito
-				SELECT @success, * FROM Partidas WHERE ID = @ID
+				BEGIN TRY
+					UPDATE dbo.Partidas 
+					SET ID_SJ = @ID_SJ,
+					Turno = @Turno,
+					EstadoPartida = @EstadoPartida,
+					PuntosP1 = @Puntos_P1,
+					PuntosP2 = @Puntos_P2,
+					MatrizJuego = @MatrizJuego
+					WHERE ID = @ID;
+					SET @success = 1 -- exito
+					SELECT @success, * FROM Partidas WHERE ID = @ID
+				END TRY
+				BEGIN CATCH
+					SET @success = 0 -- fallo
+					SELECT @success, 'Fuck'
+				END CATCH
 			END;
 		ELSE
 			BEGIN
 				SET @success = 0 -- error
-				SELECT @success
+				SELECT @success, 'Error mierda'
 			END;			
 	END;
 GO
