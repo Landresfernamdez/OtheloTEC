@@ -11,29 +11,9 @@ var sqlConection = require('../ConexionDBs/sqlConection.js');
 >   - delete              <
 ===========================
 */
-exports.insertComponente = function insertComponente(datos, callback) {
-    var request = new Request('insertComponente', function(err) { // nombre de procedimiento en la base de datos
-        if (err) {
-            callback({
-                success: false,
-                error: request.error,
-                title: "Error",
-                message: "Sucedio un error en la inserción de los datos",
-                type: "error"
-            })
-        }
-    });
-    request.addParameter('ID_Dimension', TYPES.Int, datos.ID_Dimension);
-    request.addParameter('Componente', TYPES.VarChar, datos.Componente);
-    request.addOutputParameter('success', TYPES.Bit);
-    
-    sqlConection.callProcedure(request, function(res) {
-        callback(res);
-    });
-}
 
-exports.selectPartidasDisponibles = function(callback) {
-    var request = new Request("SELECT * FROM Partidas ", function(err) {
+exports.selectSesionesJuegoDisponibles = function(callback) {
+    var request = new Request("SELECT * FROM SesionesJuego WHERE Estado = 0", function(err) {
         if (err) {
             callback({
                 success: false,

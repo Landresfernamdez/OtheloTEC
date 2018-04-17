@@ -150,7 +150,7 @@ validarArribaPC = function (x,y,jug){
  * @returns {boolean}
  */
 
-var validarArriba = function (x,y,jug){ 
+var validarAbajo = function (x,y,jug){ 
     var listaFichasNuevas = [], puntos = 0;
     if (x == 0){ 
         return false; // si esta en la primer posicion no puede validar hacia arriba

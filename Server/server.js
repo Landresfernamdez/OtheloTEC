@@ -52,7 +52,7 @@ app.use(function(req, res, next) {
 ========================================
 */
 app.post('/movimiento', gameCtrl.realizarMovimiento);
-app.get('/selectPartidasDisponibles', gameCtrl.selectPartidasDisponibles);
+app.get('/selectSesionesJuegoDisponibles', gameCtrl.selectSesionesJuegoDisponibles);
 app.post('/insertSesionJuego', gameCtrl.registrarSesionJuego);
 app.post('/insertPartida', gameCtrl.insertPartida);
 

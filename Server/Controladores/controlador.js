@@ -21,8 +21,8 @@ exports.insertPartida = function(rRequest, rResponse){
     });
 };
 
-exports.selectPartidasDisponibles = function(rRequest, rResponse){
-    logicaComponente.seleccionarPartidasDisponibles(function(data){
+exports.selectSesionesJuegoDisponibles = function(rRequest, rResponse){
+    logicaComponente.seleccionarSesionesJuegoDisponibles(function(data){
         rResponse.send(data.data);
     })
 };

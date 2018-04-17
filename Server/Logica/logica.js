@@ -31,10 +31,10 @@ exports.insertarComponente = function(datos, callback) {
 };
 
 // seleccionar partidas disponibles
-exports.seleccionarPartidasDisponibles = function(callback) {
-    consultsPreparer.selectPartidasDisponibles( function(response) {
+exports.seleccionarSesionesJuegoDisponibles = function(callback) {
+    consultsPreparer.selectSesionesJuegoDisponibles( function(response) {
         if (response.success) {
-            msg = (response.error == 1) ? "Error de conexión" : "No se pudo seleccionar los componentes";
+            msg = (response.error == 1) ? "Error de conexión" : "No se pudo seleccionar las sesiones de juego";
             callback({
                 success: true,
                 data: response.data,
