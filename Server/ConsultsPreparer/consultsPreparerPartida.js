@@ -102,6 +102,26 @@ exports.insertarSesion = function insertarSesion(datos, callback) {
         callback(res);
     });
 }
+
+exports.selectSesionesJuegoDisponibles = function(callback) {
+    var query = "SELECT us.ID,us.Correo,us.Nickname,temp.ID_SJ,temp.N_Tablero,temp.NivelDificultad,temp.TipoPartida,temp.NumPartidas FROM Usuarios as us inner join "+
+    "(SELECT * FROM SesionesJuego  as sj inner join Usuarios_SesionJuego as u on  sj.Estado = 0 and u.ID_SJ=sj.ID) as temp"+
+    " on us.ID=temp.ID";
+    var request = new Request(query, function(err) {
+        if (err) {
+            callback({
+                success: false,
+                data: err,
+                error: request.error,
+                title: "Error",
+                message: "Error obteniendo los datos. Revise su conexión",
+                type: "error"
+            });
+        }
+    });
+    // se usa executeRequest porque es el destinado para escribir consultas desde aca en vez de llamar procedimientos almacenados
+    sqlConection.executeRequest(request, callback); 
+}
 exports.selectComponente = function(callback) {
     var request = new Request("SELECT * FROM Componentes", function(err) {
         if (err) {

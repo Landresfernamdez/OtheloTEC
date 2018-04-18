@@ -101,6 +101,26 @@ exports.insertarSesion = function(datos, callback) {
     });
 };
 
+exports.seleccionarSesionesJuegoDisponibles = function(callback) {
+    consultsPreparerPartida.selectSesionesJuegoDisponibles( function(response) {
+        if (response.success) {
+            msg = (response.error == 1) ? "Error de conexión" : "No se pudo seleccionar las sesiones de juego";
+            callback({
+                success: true,
+                data: response.data,
+                error: response.error
+            })
+        } else {
+            callback({
+                success: false,
+                title: "Error",
+                error: response.error,
+                type: "error"
+            })
+        }
+    });
+};
+
 // seleccionar componentes
 exports.seleccionarComponente = function(callback) {
     consultsPreparerPartida.selectComponente( function(response) {

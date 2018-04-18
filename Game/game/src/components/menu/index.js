@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import 'react-addons-transition-group';
-import {Tabs,Tab,FormControl} from 'react-bootstrap';
+import {Tabs,Tab,FormControl,ListGroup,ListGroupItem} from 'react-bootstrap';
 import GoogleLogin from '.././GoogleLogin/index';
 import "./index.css";
 import axios from 'axios';
@@ -20,7 +20,12 @@ import {
 class  Menu extends  Component{
     constructor(props){
         super(props)
+        this.state={
+            sesiones:[]
+            
+        }
     }
+      
     handleSelect=(selectedKey)=>{
         alert(`selected ${selectedKey}`);
          }
@@ -30,39 +35,43 @@ class  Menu extends  Component{
         var color=document.getElementById("colorFicha").value;
         var tipo=document.getElementById("seltipo").value;
         var nivel=document.getElementById("selnivel").value;
-        if(tipo=="Multiplayer"){
-            tipo=2;
-        }
-        if(tipo=="Individual game"){
-            tipo=1;
-        }
-        if(tipo=="PC vs PC"){
-            tipo=3;
-        }
-        var correo=localStorage.getItem("correo");
-        axios.post('http://localhost:8080/agregarSesion',{
-                                            correo:correo,
-                                            partidas:partidas,
-                                            n:n,
-                                            color:color,
-                                            tipo:tipo,
-                                            nivel:nivel
-                                            })
-                                            .then(result => {
-                                                console.log(result);
-                                                if(result.data.success==true){
-                                                    alert("The session was create with success");
-                                                }
-                                                else{
-                                                    alert("Sucedio un error y no se inserto");
+        if(parseInt(n)>6){
+            if(tipo=="Multiplayer"){
+                tipo=2;
+            }
+            if(tipo=="Individual game"){
+                tipo=1;
+            }
+            if(tipo=="PC vs PC"){
+                tipo=3;
+            }
+            var correo=localStorage.getItem("correo");
+            axios.post('http://localhost:8080/agregarSesion',{
+                                                correo:correo,
+                                                partidas:partidas,
+                                                n:n,
+                                                color:color,
+                                                tipo:tipo,
+                                                nivel:nivel
+                                                })
+                                                .then(result => {
+                                                    console.log(result);
+                                                    if(result.data.success==true){
+                                                        alert("The session was create with success");
                                                     }
-                                                }
-                                            )
-                                            .catch(error=> {
-                                            console.log(error);
-                                            });
-
-    }     
+                                                    else{
+                                                        alert("Sucedio un error y no se inserto");
+                                                        }
+                                                    }
+                                                )
+                                                .catch(error=> {
+                                                console.log(error);
+                                                });
+        }
+        else{
+            alert("The n of the board must be greater than 6");
+        }
+    }
     render(){
         const divS={textAlign:'justify'
                     ,marginLeft:'15%',
@@ -76,13 +85,28 @@ class  Menu extends  Component{
                     display:'block',
                     marginTop:'15%'
                 }
+        //this.setState({sesiones:JSON.parse(localStorage.getItem(sesiones))});
+        const filas=[];
+        var sesiones=JSON.parse(localStorage.getItem("sesiones"));
+        console.log("mis sesiones");
+        console.log(sesiones);
+        var mail=localStorage.getItem("correo");
+        console.log(mail);
+        for(var x=0;x<sesiones.length;x++){
+            if(sesiones[x].Correo==mail){
+                sesiones.splice(x,1);
+            }
+        }
+        for(var x=0;x<sesiones.length;x++){
+            filas[x]=<ListGroupItem><b>Creador: </b>{sesiones[x].Nickname}   <b>N del tablero:</b> {sesiones[x].N_Tablero} <b>Nivel de dificultad:</b> {sesiones[x].NivelDificultad}
+            <b>Partidas:</b> {sesiones[x].NumPartidas}   
+            </ListGroupItem>
+        }
         return(
-            
             <html>
                     <head>
                     <title>Othello TEC</title>    
                     <meta charset="UTF-8"></meta>
-                    
                     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
                     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -151,7 +175,9 @@ class  Menu extends  Component{
                            </div>
                         </Tab>
                         <Tab eventKey={3} title="My sessions" >
-                            
+                        <ListGroup>
+                           {filas}
+                        </ListGroup>
                         </Tab>
                         <Tab eventKey={3} title="Sessions avaible" >
                             

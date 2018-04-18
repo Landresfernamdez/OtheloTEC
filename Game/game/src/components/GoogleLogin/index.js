@@ -18,7 +18,18 @@ class GoogleLogin extends Component{
             correo:''
         }
     }
-    
+    recuperaraSesiones=()=>{
+        axios.get('http://localhost:8080/selectSesionesJuegoDisponibles')
+            .then(function (response) {
+                localStorage.setItem("sesiones",JSON.stringify(response.data));
+                console.log("guardo");
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+                return error.data
+            })
+        }  
     componentDidMount=()=>{
         (function() {
             var e = document.createElement("script");
@@ -142,6 +153,7 @@ class GoogleLogin extends Component{
                                             });
     }        
     render(){
+        this.recuperaraSesiones();
         var divStyle = {
         marginTop:'10%',
         marginLeft:'30%',

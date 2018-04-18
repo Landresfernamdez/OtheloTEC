@@ -66,6 +66,7 @@ exports.executeRequest = function executeRequest(request, callback) {
             connection.close();
             console.log(res);
             if (parameterName === 'success' && (value === 1 || value === true)) {
+                console.log(res);
                 callback({
                     success: true,
                     data: res,

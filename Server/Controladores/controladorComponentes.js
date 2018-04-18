@@ -32,6 +32,13 @@ exports.insertarUsuario = function(rRequest, rResponse){
         rResponse.send(data);
     });
 };
+
+exports.selectSesionesJuegoDisponibles = function(rRequest, rResponse){
+    controlador.seleccionarSesionesJuegoDisponibles(function(data){
+        rResponse.send(data.data);
+    })
+};
+
 exports.insertarSesion = function(rRequest, rResponse){
     controlador.insertarSesion(rRequest.body, function(data){
         console.log(data);
