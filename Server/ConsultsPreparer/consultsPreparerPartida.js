@@ -102,7 +102,29 @@ exports.insertarSesion = function insertarSesion(datos, callback) {
         callback(res);
     });
 }
-
+exports.insertarUsuarioSesion = function insertarUsuarioSesion(datos, callback) {
+    var request = new Request('insertUsuario_SesionJuego', function(err) { // nombre de procedimiento en la base de datos
+        if (err) {
+            callback({
+                success: false,
+                error: request.error,
+                title: "Error",
+                message: "Sucedio un error en la inserción de los datos",
+                type: "error"
+            })
+        }
+    });
+    console.log(datos);
+    request.addParameter('ID_SesionJuego', TYPES.Int, datos.idsesion);
+    request.addParameter('Correo', TYPES.VarChar, datos.correo);
+    request.addParameter('colorFicha', TYPES.VarChar, datos.color);
+    request.addOutputParameter('success', TYPES.Bit);
+    sqlConection.callProcedure(request, function(res) {
+        console.log("prueba");
+        console.log(res);
+        callback(res);
+    });
+}
 exports.selectSesionesJuegoDisponibles = function(callback) {
     var query = "SELECT us.ID,us.Correo,us.Nickname,temp.ID_SJ,temp.N_Tablero,temp.NivelDificultad,temp.TipoPartida,temp.NumPartidas FROM Usuarios as us inner join "+
     "(SELECT * FROM SesionesJuego  as sj inner join Usuarios_SesionJuego as u on  sj.Estado = 0 and u.ID_SJ=sj.ID) as temp"+

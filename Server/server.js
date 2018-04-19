@@ -60,6 +60,7 @@ app.post('/validaCorreo',componenteCtrl.validaCorreo);
 app.post('/insertarUsuario',componenteCtrl.insertarUsuario);
 app.post('/agregarSesion',componenteCtrl.insertarSesion);
 app.get('/selectSesionesJuegoDisponibles', componenteCtrl.selectSesionesJuegoDisponibles);
+app.post('/putUsuarioasesiondeJuego',componenteCtrl.insertarUsuarioSesion);
 /*
 ======================================================================================
 >  Pone el servidor en escucha de peticiones, lo levanta en el puerto especificado.  <

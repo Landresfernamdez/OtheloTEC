@@ -45,6 +45,18 @@ exports.insertarSesion = function(rRequest, rResponse){
         rResponse.send(data);
     });
 };
+exports.insertarSesion = function(rRequest, rResponse){
+    controlador.insertarSesion(rRequest.body, function(data){
+        console.log(data);
+        rResponse.send(data);
+    });
+};
+exports.insertarUsuarioSesion = function(rRequest, rResponse){
+    controlador.insertarUsuarioSesion(rRequest.body, function(data){
+        console.log(data);
+        rResponse.send(data);
+    });
+};
 exports.selectComponente = function(rRequest, rResponse){
     logicaComponente.seleccionarComponente(function(data){
         rResponse.send(data.data);

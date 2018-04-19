@@ -12,6 +12,7 @@ import othrules3 from './othrules3.gif';
 import othrules4 from './othrules4.gif';
 import othrules5 from './othrules5.gif';
 import othrules6 from './othrules6.gif';
+import ReactDOM from 'react-dom';
 import {
     Route,
     NavLink,
@@ -22,7 +23,6 @@ class  Menu extends  Component{
         super(props)
         this.state={
             sesiones:[]
-            
         }
     }
       
@@ -60,7 +60,7 @@ class  Menu extends  Component{
                                                         alert("The session was create with success");
                                                     }
                                                     else{
-                                                        alert("Sucedio un error y no se inserto");
+                                                        alert("Error the ssesion was not create with success");
                                                         }
                                                     }
                                                 )
@@ -72,7 +72,46 @@ class  Menu extends  Component{
             alert("The n of the board must be greater than 6");
         }
     }
+    recuperaraSesiones=()=>{
+        axios.get('http://localhost:8080/selectSesionesJuegoDisponibles')
+            .then(response=>{
+                //localStorage.setItem("sesiones",JSON.stringify(response.data));
+                this.setState({sesiones:response.data});
+            })
+            .catch(function (error) {
+                console.log(error);
+                return error.data
+            })
+        }  
+    unirseSesion=(e)=>{
+        e.preventDefault();
+        const  {param}=e.target.dataset;
+        var data=JSON.parse(param);
+        axios.post('http://localhost:8080/putUsuarioasesiondeJuego',{
+                                                correo:data.correo,
+                                                color:data.color,
+                                                idsesion:data.idsesion
+                                                })
+                                                .then(result => {
+                                                    console.log(result);
+                                                    if(result.data.success==true){
+
+                                                    }
+                                                    else{
+                                                        alert("Select other color");
+                                                        }
+                                                    }
+                                                )
+                                                .catch(error=> {
+                                                console.log(error);
+                                                });
+        
+
+
+
+    }    
     render(){
+        this.recuperaraSesiones();
         const divS={textAlign:'justify'
                     ,marginLeft:'15%',
                     marginRight:'15%',
@@ -87,7 +126,7 @@ class  Menu extends  Component{
                 }
         //this.setState({sesiones:JSON.parse(localStorage.getItem(sesiones))});
         const filas=[];
-        var sesiones=JSON.parse(localStorage.getItem("sesiones"));
+        var sesiones=this.state.sesiones;
         console.log("mis sesiones");
         console.log(sesiones);
         var mail=localStorage.getItem("correo");
@@ -100,7 +139,8 @@ class  Menu extends  Component{
         for(var x=0;x<sesiones.length;x++){
             filas[x]=<ListGroupItem><b>Creador: </b>{sesiones[x].Nickname}   <b>N del tablero:</b> {sesiones[x].N_Tablero} <b>Nivel de dificultad:</b> {sesiones[x].NivelDificultad}
             <b>Partidas:</b> {sesiones[x].NumPartidas}   
-            </ListGroupItem>
+            <button  data-param={JSON.stringify({idsesion:sesiones[x].ID,correo:mail,color:document.getElementById("inputColorf2").value})} onClick={this.unirseSesion}>Unirse a sesion
+                    </button></ListGroupItem>
         }
         return(
             <html>
@@ -174,13 +214,14 @@ class  Menu extends  Component{
                             <button type="button" class="btn btn-primary" onClick={this.insertSession}>Crear sesion de juego</button>
                            </div>
                         </Tab>
-                        <Tab eventKey={3} title="My sessions" >
-                        <ListGroup>
-                           {filas}
-                        </ListGroup>
+                        <Tab eventKey={3} title="My sessions">
+                            <b>My ssesions</b>
                         </Tab>
-                        <Tab eventKey={3} title="Sessions avaible" >
-                            
+                        <Tab eventKey={4} title="Sessions avaible" >
+                            <b>Select a color of your chip and after select the game</b><input type="color" id="inputColorf2"></input>
+                            <ListGroup>
+                            {filas}
+                            </ListGroup>
                         </Tab>
                     </Tabs>
                         </body>

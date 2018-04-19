@@ -121,23 +121,26 @@ GO
 USE OthelloTEC
 GO
 CREATE PROCEDURE insertUsuario_SesionJuego -- LISTO
-	@ID_Usuario			INT,
+	@Correo VARCHAR(50),			
 	@ID_SesionJuego		INT,
 	@ColorFicha			VARCHAR(10),
 	@success			BIT		OUTPUT
 AS 
 	BEGIN
-		IF ((SELECT COUNT(*) FROM dbo.Usuarios_SesionJuego AS US WHERE US.ID_Usuario = @ID_Usuario AND US.ID_SJ = @ID_SesionJuego) = 1) -- ya existe el registro
+		DECLARE @ID_Usuario INT;
+		SET @ID_Usuario=(SELECT ID FROM Usuarios WHERE Correo=@Correo);
+		IF ((SELECT COUNT(*) FROM dbo.Usuarios_SesionJuego AS US WHERE US.ID_Usuario != @ID_Usuario AND US.ID_SJ = @ID_SesionJuego and US.ColorFicha!=@ColorFicha) = 1) -- Existe solo el creador de la sesion
+			BEGIN
+				INSERT INTO dbo.Usuarios_SesionJuego (ID_Usuario,ID_SJ,ColorFicha) VALUES (@ID_Usuario,@ID_SesionJuego,@ColorFicha);
+				UPDATE SesionesJuego SET Estado=1 where ID=@ID_SesionJuego;
+				SET @success = 1 -- exito
+				SELECT @success
+			END;	
+		ELSE
 			BEGIN
 				SET @success = 0 -- error
 				SELECT @success
-			END;
-		ELSE
-			BEGIN
-				INSERT INTO dbo.Usuarios_SesionJuego (ID_Usuario,ID_SJ,ColorFicha) VALUES (@ID_Usuario,@ID_SesionJuego,@ColorFicha);
-				SET @success = 1 -- exito
-				SELECT @success
-			END;			
+			END;		
 	END;
 GO
 
@@ -262,3 +265,10 @@ AS
 GO
 
 
+
+
+SELECT us.ID,us.Correo,us.Nickname,temp.ID_SJ,temp.N_Tablero,temp.NivelDificultad,temp.TipoPartida,temp.NumPartidas FROM Usuarios as us inner join 
+(SELECT * FROM SesionesJuego  as sj inner join Usuarios_SesionJuego as u on  sj.Estado = 0 and u.ID_SJ=sj.ID) as temp
+on us.ID=temp.ID
+
+SELECT * from SesionesJuego 

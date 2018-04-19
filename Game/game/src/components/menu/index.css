@@ -1,5 +1,5 @@
 body {
-    background-color: #FFCC00;
+    background-color: white;
     padding: 20px;
     margin: 0;
   }
@@ -34,7 +34,7 @@ body {
     margin-bottom: 10px;
   }
   .active {
-    background-color: #0099FF;
+    background-color:whitesmoke;
   }
   .divContenedor{
     vertical-align: inherit;
