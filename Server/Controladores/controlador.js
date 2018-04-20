@@ -3,14 +3,14 @@
 >  Controlador de los Componentes del sistema  <
 ================================================
 */
-var funciones = require('../Logica Juego/funciones_principales2');
+var funciones = require('../Logica Juego/funciones_principales3');
 var logicaComponente = require('../Logica/logica');
 
 exports.realizarMovimiento = function(rRequest, rResponse){
     console.log(rRequest.body)
     funciones.validarMovimiento(rRequest.body, function(data){
-        console.log('=========    DATA    =========');
-        console.log(data);
+        //console.log('=========    DATA    =========');
+        //console.log(data);
         rResponse.send(data);
     })
 };

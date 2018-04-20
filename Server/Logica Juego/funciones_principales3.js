@@ -7,7 +7,7 @@ var matriz = [[0,0,0,0,0,0],
 [0,0,1,2,0,0],
 [0,0,2,1,0,0],
 [0,0,0,0,0,0],
-[0,0,0,0,0,0]], listaFichas = [], jugadas = [], ID_Partida = 16, ID_SJ = 1, EstadoPartida = 0, turno = 0;
+[0,0,0,0,0,0]], listaFichas = [], jugadas=[];
               
 /**
  * Funcion encargada de convertir un string en una matriz cuadrada dependiendo de una cantidad n de elementos.
@@ -17,7 +17,7 @@ var obtenerMatriz = function (matrizString,tamanoTablero){
     var matrizFinal = [];
     for (let i = 0; i < matrizString.length; i++) {
         var matAux = [];
-        for (let j = 0; j < tamanoTablero; j++) {   
+        for (let j = 0; j < tamanoTablero; j++) {
             matAux.push(matrizString[i+j]);
         }
         i += 2;
@@ -38,19 +38,6 @@ var obtenerString = function(matriz){
     }
     return string;
 }
-
-var imprimirFichas = function (jugador){
-    var lista = [];
-    console.log('>>>>>>>>>>>>>>>> Fichas jugador #'+jugador+'  <<<<<<<<<<<<<<<');
-    for (let i = 0; i < matriz.length; i++) {
-        for (let j = 0; j < matriz.length; j++) {
-            if(matriz[i][j] == jugador)
-                lista.push({X: i, Y: j});
-        }
-    }
-    console.log(lista);
-}
-
 /**
  * Funcion encargada de mostrar una matriz en consola.
  */
@@ -85,21 +72,21 @@ var mostrarFichas = function(matriz){
  */
 var validarArriba = function (x,y,jug){
     var listaFichasNuevas = [];
-    if (x == matriz[0].length-1){
+    if (x == matriz.length-1){
         return false; // si esta en la primer posicion no puede validar hacia arriba
     }
-    listaFichasNuevas.push({x: x, y: y});
+    listaFichasNuevas.push({x:x,y:y});
     x++;
-    while (x < matriz[0].length - 1) {
+    while (x < matriz.length-1) {
         if (matriz[x][y] != jug & matriz[x][y] != 0) { // mientras sea la ficha del contrincante siga moviendose
-            listaFichasNuevas.push({x: x, y: y});
+            listaFichasNuevas.push({x:x,y:y});
             x++;
         }
         else
             break;      
     }
     if (matriz[x][y] == jug & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
-        listaFichas.push(listaFichasNuevas);
+        listaFichas = listaFichasNuevas;
         return true;
     }
     else{
@@ -133,7 +120,7 @@ var validarArribaPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
+        console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -150,25 +137,23 @@ var validarArribaPC = function (x,y,jug){
  * @param jug
  * @returns {boolean}
  */
-
 var validarAbajo = function (x,y,jug){ 
-    var listaFichasNuevas = [], puntos = 0;
-    if (x == 0){ 
-        return false; // si esta en la primer posicion no puede validar hacia arriba
+    var listaFichasNuevas = [];
+    if (x == 0){
+        return false; // si esta en la ultima posicion no puede validar hacia abajo
     }
-    listaFichasNuevas.push({x: x, y: y});
+    listaFichasNuevas.push({x:x,y:y});
     x--;
     while (x > 0) {
         if (matriz[x][y] != jug & matriz[x][y] != 0) { // mientras sea la ficha del contrincante siga moviendose
-            listaFichasNuevas.push({x: x, y: y});
+            listaFichasNuevas.push({x:x,y:y});
             x--;
-            puntos++;
         }
         else
             break;      
     }
-    if (matriz[x][y] == jug & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
-        listaFichas.push(listaFichasNuevas);
+    if (matriz[x][y] == jug & listaFichasNuevas.length > 1){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
+        listaFichas = listaFichasNuevas;
         return true;
     }
     else{
@@ -202,7 +187,7 @@ var validarAbajoPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
+        console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -224,18 +209,18 @@ var validarDerecha = function (x,y,jug){
     if (y == 0){
         return false; // si esta en la ultima posicion no puede validar hacia abajo
     }
-    listaFichasNuevas.push({x: x, y: y});
+    listaFichasNuevas.push({x:x,y:y});
     y--;
     while (y > 0) {
         if (matriz[x][y] != jug & matriz[x][y] != 0) { // mientras sea la ficha del contrincante siga moviendose
-            listaFichasNuevas.push({x: x, y: y});
+            listaFichasNuevas.push({x:x,y:y});
             y--;
         }
         else
             break;      
     }
-    if (matriz[x][y] == jug & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
-        listaFichas.push(listaFichasNuevas);
+    if (matriz[x][y] == jug & listaFichasNuevas.length > 1){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
+        listaFichas = listaFichasNuevas;
         return true;
     }
     else{
@@ -253,11 +238,11 @@ var validarDerecha = function (x,y,jug){
 var validarDerechaPC = function (x,y,jug){
     var listaFichasNuevas = [];
     var pts=0;
-    if (y == matriz[0].length-1){
+    if (y == matriz.length-1){
         return false; // si esta en la primer posicion no puede validar hacia arriba
     }
     y++;
-    while (y < matriz[0].length-1) {
+    while (y < matriz.length-1) {
         if (matriz[x][y] != jug & matriz[x][y] != 0) { // mientras sea la ficha del contrincante siga moviendose
             listaFichasNuevas.push({x:x,y:y});
             y++;
@@ -269,7 +254,7 @@ var validarDerechaPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
+        console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -288,21 +273,21 @@ var validarDerechaPC = function (x,y,jug){
  */
 var validarIzquierda = function (x,y,jug){
     var listaFichasNuevas = [];
-    if (y == matriz[0].length-1){
+    if (y == matriz.length-1){
         return false; // si esta en la ultima posicion no puede validar hacia abajo
     }
-    listaFichasNuevas.push({x: x, y: y});
+    listaFichasNuevas.push({x:x,y:y});
     y++;
-    while (y < matriz[0].length - 1) {
+    while (y < matriz.length -1) {
         if (matriz[x][y] != jug & matriz[x][y] != 0) { // mientras sea la ficha del contrincante siga moviendose
-            listaFichasNuevas.push({x: x, y: y});
+            listaFichasNuevas.push({x:x,y:y});
             y++;
         }
         else
             break;
     }
-    if (matriz[x][y] == jug & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
-        listaFichas.push(listaFichasNuevas);
+    if (matriz[x][y] == jug & listaFichasNuevas.length > 1){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
+        listaFichas = listaFichasNuevas;
         return true;
     }
     else{
@@ -324,7 +309,7 @@ var validarIzquierdaPC = function (x,y,jug){
         return false; // si esta en la primer posicion no puede validar hacia arriba
     }
     y--;
-    while (y > 0) {
+    while (y >0) {
         if (matriz[x][y] != jug & matriz[x][y] != 0) { // mientras sea la ficha del contrincante siga moviendose
             listaFichasNuevas.push({x:x,y:y});
             y--;
@@ -336,7 +321,7 @@ var validarIzquierdaPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
+        console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -355,23 +340,24 @@ var validarIzquierdaPC = function (x,y,jug){
  */
 var validarArribaDerecha = function (x,y,jug){ 
     var listaFichasNuevas = [];
-    if (x == matriz[0].length - 1 | y ==0 ){
+    if (x == matriz.length - 1 | y ==0 ){
         return false; // si esta en la esquina derecha de arriba no puede validar porque se saldria de la matriz
     }
-    listaFichasNuevas.push({x: x, y: y});
+    listaFichasNuevas.push({x:x,y:y});
     x++;
     y--;
-    while (x < matriz[0].length - 1& y > 0 ) {
+    while (x < matriz.length -1 & y > 0 ) {
         if (matriz[x][y] != jug & matriz[x][y] != 0) { // mientras sea la ficha del contrincante siga moviendose
-            listaFichasNuevas.push({x: x, y: y});
+            listaFichasNuevas.push({x:x,y:y});
             x++;
             y--;
         }
         else
             break;      
     }
-    if (matriz[x][y] == jug & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
-        listaFichas.push(listaFichasNuevas);
+    if 
+    (matriz[x][y] == jug & listaFichasNuevas.length > 1){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
+        listaFichas = listaFichasNuevas;
         return true;
     }
     else{
@@ -389,7 +375,7 @@ var validarArribaDerecha = function (x,y,jug){
 var validarArribaDerechaPC = function (x,y,jug){
     var listaFichasNuevas = [];
     var pts=0;
-    if (x == 0 | y == matriz[0].length - 1){
+    if (x == 0 | y == matriz.length - 1){
         return false; // si esta en la esquina derecha de arriba no puede validar porque se saldria de la matriz
     }
     x--;
@@ -407,7 +393,7 @@ var validarArribaDerechaPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
+        console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -429,20 +415,20 @@ var validarAbajoDerecha = function (x,y,jug){
     if (x == 0 | y == 0){
         return false; // si esta en la esquina derecha de abajo no puede validar porque se saldria de la matriz
     }
-    listaFichasNuevas.push({x: x, y: y});
+    listaFichasNuevas.push({x:x,y:y});
     x--;
     y--;
     while (x > 0 & y > 0) {
         if (matriz[x][y] != jug & matriz[x][y] != 0) { // mientras sea la ficha del contrincante siga moviendose
-            listaFichasNuevas.push({x: x, y: y});
+            listaFichasNuevas.push({x:x,y:y});
             x--;
             y--;
         }
         else
             break;      
     }
-    if (matriz[x][y] == jug & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
-        listaFichas.push(listaFichasNuevas);
+    if (matriz[x][y] == jug & listaFichasNuevas.length > 1){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
+        listaFichas = listaFichasNuevas;
         return true;
     }
     else{
@@ -478,7 +464,7 @@ var validarAbajoDerechaPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
+        console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -500,20 +486,20 @@ var validarArribaIzquierda = function (x,y,jug){
     if (x == matriz[0].length-1 | y == matriz[0].length-1){
         return false; // si esta en la esquina izquierda de arriba no puede validar porque se saldria de la matriz
     }
-    listaFichasNuevas.push({x: x, y: y});
+    listaFichasNuevas.push({x:x,y:y});
     x++;
     y++;
-    while (x < matriz[0].length - 1 & y < matriz[0].length - 1) {
+    while (x < matriz[0].length -1 & y < matriz[0].length -1) {
         if (matriz[x][y] != jug & matriz[x][y] != 0) { // mientras sea la ficha del contrincante siga moviendose
-            listaFichasNuevas.push({x: x, y: y});
+            listaFichasNuevas.push({x:x,y:y});
             x++;
             y++;
         }
         else
             break;      
     }
-    if (matriz[x][y] == jug & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador        
-        listaFichas.push(listaFichasNuevas);
+    if (matriz[x][y] == jug & listaFichasNuevas.length > 1){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
+        listaFichas = listaFichasNuevas;
         return true;
     }
     else{
@@ -549,7 +535,7 @@ var validarArribaIzquierdaPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
+        console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -568,23 +554,23 @@ var validarArribaIzquierdaPC = function (x,y,jug){
  */
 var validarAbajoIzquierda = function (x,y,jug){
     var listaFichasNuevas = [];
-    if (x == 0  | y == matriz[0].length-1){
+    if (x ==0  | y == matriz[0].length-1){
         return false; // si esta en la esquina izquierda de arriba no puede validar porque se saldria de la matriz
     }
-    listaFichasNuevas.push({x: x, y: y});
+    listaFichasNuevas.push({x:x,y:y});
     x--;
     y++;
-    while (y < matriz[0].length - 1 & x > 0) {
+    while (y < matriz[0].length -1 & x > 0) {
         if (matriz[x][y] != jug & matriz[x][y] != 0) { // mientras sea la ficha del contrincante siga moviendose
-            listaFichasNuevas.push({x: x, y: y});
+            listaFichasNuevas.push({x:x,y:y});
             y++;
             x--;
         }
         else
             break;      
     }
-    if (matriz[x][y] == jug & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
-        listaFichas.push(listaFichasNuevas);
+    if (matriz[x][y] == jug & listaFichasNuevas.length > 1){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
+        listaFichas = listaFichasNuevas;
         return true;
     }
     else{
@@ -620,7 +606,7 @@ var validarAbajoIzquierdaPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
+        console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -635,7 +621,7 @@ var validarAbajoIzquierdaPC = function (x,y,jug){
  * @param lista
  * @returns {*}
  */
-function ordenarLista(lista){
+function  ordenarLista(lista){
     lista.sort(function (a,b) {
         if (parseFloat(a.pts) > parseFloat(b.pts)){
             return -1;
@@ -655,10 +641,11 @@ function ordenarLista(lista){
  */
 function devuelveFichasPC(jugador){
     var fichas=[];//Fichas que estan en la matriz de la PC
-    for(var x = 0; x < matriz.length; x++){
-        for(var y = 0; y < matriz.length; y++){
-            if(matriz[x][y] == jugador)
-                fichas.push({x: x, y: y});            
+    for(var x=0;x<matriz[0].length;x++){
+        for(var y=0;y<matriz[0].length;y++){
+            if(matriz[x][y]==jugador){
+                fichas.push({x:x,y:y});
+            }
         }
     }
     return fichas;
@@ -669,45 +656,53 @@ function devuelveFichasPC(jugador){
  * @returns {boolean}
  */
 function fichasJugadorXtienenJugada(fichasPC,jugador){
+    console.log(fichasPC);
     for(var i=0;i<fichasPC.length;i++){
         var x = fichasPC[i].x, y = fichasPC[i].y, jug = jugador;
         //validar todas las direcciones
         //Listo
         if(validarArribaPC(x,y,jug)){
             console.log("Entro en arriba\n");
+            return true;
         }
         if(validarAbajoPC(x,y,jug)){
             console.log("Entro en abajo\n");
+            return true;
         }
         if(validarDerechaPC(x,y,jug)){
             console.log("Entro en derecha\n");
+            return true;
         }
         if(validarIzquierdaPC(x,y,jug)){
             console.log("Entro en izquierda\n");
+            return true;
         }
         if(validarArribaDerechaPC(x,y,jug)){
             console.log("Entro en arriba-derecha\n");
+            return true;
         }
         if(validarAbajoDerechaPC(x,y,jug)){
             console.log("Entro en abajo-derecha\n");
+            return true;
         }
         if(validarArribaIzquierdaPC(x,y,jug)){
             console.log("Entro en arriba-izquierda\n");
+            return true;
         }
         if(validarAbajoIzquierdaPC(x,y,jug)){
             console.log("Entro en abajo-izquierda\n");
+            return true;
         }
-        return true;
     }
     return false;
 }
 /**
  * Posibles jugadas de la computadora
  */
-function posiblesJugadas(fichasPC,jugador){
+function posiblesJugadas(fichasPC){
     //console.log("x:"+fichasPC[0].x+"y:"+fichasPC[0].y);
     for(var i=0;i<fichasPC.length;i++){
-        var x = fichasPC[i].x, y = fichasPC[i].y, jug = jugador;
+        var x = fichasPC[i].x, y = fichasPC[i].y, jug = 2;
         //validar todas las direcciones
         //Listo
         if(validarArribaPC(x,y,jug)){
@@ -737,51 +732,58 @@ function posiblesJugadas(fichasPC,jugador){
     }
 }
 
-var validarDirecciones = function (x,y,jug,validas) {
-    //validar todas las direcciones
-    if (validarArriba(x,y,jug)) {
-        console.log(x,y+"Entro en arriba\n");
+var revalidarDirecciones = function(x,y,jug){
+    var validas = 0;
+    if (validarArriba(x, y, jug)) {
+        console.log("Entro en arriba\n");
         validas++;
         cambiarColor(x,y,jug);
+        //mostrarMatriz(matriz);
     }
     if (validarAbajo(x, y, jug)) {
-        console.log(x,y+"Entro en abajo\n");
+        console.log("Entro en abajo\n");
         validas++;
         cambiarColor(x,y,jug);
+        //mostrarMatriz(matriz);
     }
     if (validarDerecha(x, y, jug)) {
-        console.log(x,y+"Entro en derecha\n");
+        console.log("Entro en derecha\n");
         validas++;
         cambiarColor(x,y,jug);
+        //mostrarMatriz(matriz);
     }
     if (validarIzquierda(x, y, jug)) {
-        console.log(x,y+"Entro en izquierda\n");
+        console.log("Entro en izquierda\n");
         validas++;
         cambiarColor(x,y,jug);
+        //mostrarMatriz(matriz);
     }
     if (validarArribaDerecha(x, y, jug)) {
-        console.log(x,y+"Entro en arriba-derecha\n");
+        console.log("Entro en arriba-derecha\n");
         validas++;
         cambiarColor(x,y,jug);
+        //mostrarMatriz(matriz);
     }
     if (validarAbajoDerecha(x, y, jug)) {
-        console.log(x,y+"Entro en abajo-derecha\n");
+        console.log("Entro en abajo-derecha\n");
         validas++;
         cambiarColor(x,y,jug);
+        //mostrarMatriz(matriz);
     }
     if (validarArribaIzquierda(x, y, jug)) {
-        console.log(x,y+"Entro en arriba-izquierda\n");
+        console.log("Entro en arriba-izquierda\n");
         validas++;
         cambiarColor(x,y,jug);
+        //mostrarMatriz(matriz);
     }
     if (validarAbajoIzquierda(x, y, jug)) {
-        console.log(x,y+"Entro en abajo-izquierda\n");
+        console.log("Entro en abajo-izquierda\n");
         validas++;
         cambiarColor(x,y,jug);
+        //mostrarMatriz(matriz);
     }
-    return validas;    
+    return validas;
 }
-
 /**
  * Request de la aplicacion cliente al hacer un click en el tablero
  * @param datos
@@ -790,14 +792,16 @@ var validarDirecciones = function (x,y,jug,validas) {
  */
 exports.validarMovimiento = function(datos,callback){
     try {
-        var matriz_respaldo = matriz;
-        if(datos.tipo==1){
-            var x = datos.x, y = datos.y, jug = datos.jug, validas = 0;
-            
+        //var x = datos.x, y = datos.y, jug = datos.jug, validas = 0, ID_Partida = datos.ID_Partida, ID_SJ = datos.ID_SJ;
+
+        var x = datos.x, y = datos.y, jug = datos.jug, validas = 0;
+
+        var ID_Partida = 16, ID_SJ = 1, EstadoPartida = 0, turno = 1;
+        if(datos.tipo==1){            
             if (matriz[x][y] == 0) // si hay un espacio en blanco puede colochar ficha
             {
                 //validar todas las direcciones
-                validas = validarDirecciones(x,y,jug,validas);
+                
                 if (validas == 0) {
                     var nivel = 1;
                     //console.log("Movimiento invalido\n" + listaFichas);
@@ -832,14 +836,68 @@ exports.validarMovimiento = function(datos,callback){
         else if(datos.tipo==2){
             if(datos.jug==1){
                 var lista=devuelveFichasPC(1);
-                if(lista.length > 0){
-                    if(fichasJugadorXtienenJugada(lista,1)){                        
-                        //imprimirFichas(1);
-                        var x = datos.x, y = datos.y, jug = 1;
-                        var validas = 0;
+                if(lista.length>0){
+                    if(fichasJugadorXtienenJugada(lista,1)){
+                        x = datos.x, y = datos.y, jug = 1, validas = 0;
                         if (matriz[x][y] == 0) // si hay un espacio en blanco puede colochar ficha
                         {
-                            validas = validarDirecciones(x,y,jug,validas);
+                            var x1=x,y1=y,jug1=jug;
+                            //validar todas las direcciones
+                            if(validarArriba(x1,y1,jug1)){
+                                console.log("Entro en arriba\n");
+                                validas++;
+                                cambiarColor(x,y,jug);
+                                //mostrarMatriz(matriz);
+                            }
+                            var x2=x,y2=y,jug2=jug;
+                            if(validarAbajo(x2,y2,jug2)){
+                                console.log("Entro en abajo\n");
+                                validas++;
+                                cambiarColor(x,y,jug);
+                                //mostrarMatriz(matriz);
+                            }
+                            var x3=x,y3=y,jug3=jug;
+                            if(validarDerecha(x3,y3,jug3)){
+                                console.log("Entro en derecha\n");
+                                validas++;
+                                cambiarColor(x,y,jug);
+                                //mostrarMatriz(matriz);
+                            }
+                            var x4=x,y4=y,jug4=jug;
+                            if(validarIzquierda(x4,y4,jug4)){
+                                console.log("Entro en izquierda\n");
+                                validas++;
+                                cambiarColor(x,y,jug);
+                                //mostrarMatriz(matriz);
+                            }
+                            var x5=x,y5=y,jug5=jug;
+                            if(validarArribaDerecha(x5,y5,jug5)){
+                                console.log("Entro en arriba-derecha\n");
+                                validas++;
+                                cambiarColor(x,y,jug);
+                                //mostrarMatriz(matriz);
+                            }
+                            var x6=x,y6=y,jug6=jug;
+                            if(validarAbajoDerecha(x6,y6,jug6)){
+                                console.log("Entro en abajo-derecha\n");
+                                validas++;
+                                //cambiarColor(x,y,jug);
+                                //mostrarMatriz(matriz);
+                            }
+                            var x7=x,y7=y,jug7=jug;
+                            if(validarArribaIzquierda(x7,y7,jug7)){
+                                console.log("Entro en arriba-izquierda\n");
+                                validas++;
+                                cambiarColor(x,y,jug);
+                                //mostrarMatriz(matriz);
+                            }
+                            var x8=x,y8=y,jug8=jug;
+                            if(validarAbajoIzquierda(x8,y8,jug8)){
+                                console.log("Entro en abajo-izquierda\n");
+                                validas++;
+                                cambiarColor(x,y,jug);
+                                //mostrarMatriz(matriz);
+                            }
                             if (validas == 0){
                                 var nivel=3;
                                 //console.log("Movimiento invalido\n" + listaFichas);
@@ -851,37 +909,16 @@ exports.validarMovimiento = function(datos,callback){
                                     type: "error"
                                 })
                             }
-                            else{// pudo jugar
-                                validas = 0;
-                                
-                                turno = 0;
-                                if (jug == 1) {
-                                    turno = 2;
-                                }
-                                else {
-                                    turno = 1;
-                                }
-                                /*listaFichas= [];
-                                var listaFichasJugador1 = devuelveFichasPC(1);                                
-                                var validas1 = 1;
-                                while(validas1 == 0){
-                                    validas1 = 0;
-                                    listaFichas = [];
-                                    for (let i = 0; i < listaFichasJugador1.length; i++) {
-                                        validas1 += validarDirecciones(listaFichasJugador1[i].x, listaFichasJugador1[i].y, jug, validas1);
-                                    }
-                                    console.log(validas1);
-                                }*/
-                                
+                            else{
+                                //console.log("prueba");
                                 jugadas=[];
-                                setTimeout(function() {
-                                    var fichasPC = devuelveFichasPC(2);//Esta lista almacena las fichas de la compu
-                                    if(fichasPC.length > 0){
+                                setTimeout(function(){
+                                    var fichasPC=devuelveFichasPC(2);//Esta lista almacena las fichas de la compu
+                                    if(fichasPC.length>0){
                                         //console.log("prueba");
                                         if(fichasJugadorXtienenJugada(fichasPC,2)){
                                             ///Juego de la computadora
-
-                                            posiblesJugadas(fichasPC,2);//Almacena las posibles jugadas de la PC
+                                            posiblesJugadas(fichasPC);//Almacena las posibles jugadas de la PC
                                             //console.log("prueba");
                                             //console.log("Tamano:"+jugadas.length);
                                             if (jugadas.length == 0){
@@ -894,13 +931,13 @@ exports.validarMovimiento = function(datos,callback){
                                                     data: {matriz:matriz,turno:1,nivel:nivel,tipo:2,ganador:1},
                                                     type: "error"
                                                 })
-                                                return;
                                             }
                                             else{
+
                                                 //console.log("prueba");
                                                 //Ordenar la lista por puntos
                                                 jugadas=ordenarLista(jugadas);
-
+                                                
                                                 var nivel=3;
                                                 console.log("Tamano:"+jugadas.length);
                                                 if(nivel==1){
@@ -922,16 +959,6 @@ exports.validarMovimiento = function(datos,callback){
                                                         cambiarColorPC(temp.fichas[x].x,temp.fichas[x].y,2);
                                                     }
                                                 }
-                                                /*listaFichas = [];
-                                                var validas2 = 1;
-                                                while(validas2 == 0){
-                                                    validas2 = 0, listaFichas = [];
-                                                    var listaFichasJugador2 = devuelveFichasPC(2);
-                                                    for (let i = 0; i < listaFichasJugador2.length; i++) {
-                                                        validas2 += validarDirecciones(listaFichasJugador2[i].x, listaFichasJugador2[i].y, jug, validas2);
-                                                    }
-                                                    console.log(validas2);
-                                                }*/
                                                 //Si la IA tiene movimientos posibles entonces.....
                                                 //console.log("Movimiento valido\n" + listaFichas);
                                                 var requestPC = new Request('editPartida', function(err) {
@@ -1003,8 +1030,7 @@ exports.validarMovimiento = function(datos,callback){
                                                 data: {matriz:matriz,turno:1,nivel:nivel,ganador:1},
                                                 message: "Movimiento realizado",
                                                 type: "success"
-                                            })
-                                            return;
+                                            })                                            
                                         }
                                     }
                                     else{
@@ -1018,10 +1044,9 @@ exports.validarMovimiento = function(datos,callback){
                                             message: "Movimiento realizado",
                                             type: "success"
                                         })
-                                        return;
                                     }
-                                },800);
-                            }                        
+                                },650)
+                            }
                         }
                         else
                             return false; // no puede jugar ahi
@@ -1037,7 +1062,6 @@ exports.validarMovimiento = function(datos,callback){
                             message: "Movimiento realizado",
                             type: "success"
                         })
-                        return;
                     }
                 }
                 else{
@@ -1051,7 +1075,6 @@ exports.validarMovimiento = function(datos,callback){
                         message: "Movimiento realizado",
                         type: "success"
                     })
-                    return;
                 }
             }
         }
@@ -1066,20 +1089,25 @@ exports.validarMovimiento = function(datos,callback){
  * @param jug
  */
 var cambiarColor = function (x,y,jug) {
-    console.log(listaFichas);
+    var cantBuenas = 0;
     matriz[x][y] = jug;
     for (let i = 0; i < listaFichas.length; i++){ // cambiar color de fichas ganadas
-        for (let j = 0; j < listaFichas.length; j++) {
-            matriz[listaFichas[i][j].x][listaFichas[i][j].y] = jug;
-        }        
-    }/*
-    var cantidadBuenas = 0;
-    for (let i = 0; i < listaFichas.length; i++) {
-        for (let j = 0; j < listaFichas.length; j++) {
-            cantidadBuenas = validarDirecciones(listaFichas[i][j].x,listaFichas[i][j].y,jug,cantidadBuenas);
-        }
-    }*/
+        matriz[listaFichas[i].x][listaFichas[i].y] = jug;
+    }
+    
+    listaFichas = []; // limpiamos lista de fichas nuevas
+
 }
 var cambiarColorPC = function (x,y,jug) {
     matriz[x][y] = jug;
+}
+
+var verificarMasComidas = function(jug){
+    var cantBuenas = 0;
+    // al cambiar fichas de color, esas fichas pueden generar mas jugadas
+    for (let i = 0; i < listaFichas.length; i++) {
+        for (let j = 0; j < listaFichas.length; j++) {
+            cantBuenas = validarDirecciones(listaFichas[i].x,listaFichas[i].y,jug,cantBuenas);
+        }
+    }
 }
