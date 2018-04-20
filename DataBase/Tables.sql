@@ -120,7 +120,7 @@ GO
 ----------------------------------------------
 USE OthelloTEC
 GO
-CREATE PROCEDURE insertUsuario_SesionJuego -- LISTO
+ALTER PROCEDURE insertUsuario_SesionJuego -- LISTO
 	@Correo VARCHAR(50),			
 	@ID_SesionJuego		INT,
 	@ColorFicha			VARCHAR(10),
@@ -143,13 +143,13 @@ AS
 			END;		
 	END;
 GO
-
+SELECT * FROM Partidas
 ----------------------------------------------
 --				SesionJuego
 ----------------------------------------------
 USE OthelloTEC
 GO
-CREATE PROCEDURE insertSesionJuego -- LISTO
+ALTER PROCEDURE insertSesionJuego -- LISTO
 	@NumPartidas		INT,
 	@N_Tablero			INT,
 	@NivelDificultad	INT,
@@ -174,11 +174,154 @@ AS
 				DECLARE @IDU INT;
 				SET @IDU=(SELECT ID from Usuarios where Correo=@IdUsuario);
 				INSERT INTO dbo.Usuarios_SesionJuego (ID_SJ,ID_Usuario,ColorFicha) VALUES (@IDS,@IDU,@colorFicha);
+				---This code fragment generate the first matriz in the game
+				DECLARE @N INT=@N_Tablero;	
+				DECLARE @NC1 INT=@N;
+				DECLARE @TXTPLANO NVARCHAR(MAX)='';
+				DECLARE @PS1 INT=@N/2;
+				DECLARE @PS2 INT=@PS1+1;
+				WHILE(@NC1>0)
+					BEGIN
+						SELECT @NC1
+						DECLARE @NC2 INT=@N;
+						WHILE(@NC2>0)
+							BEGIN
+								IF(@NC1=@PS1 and @NC2=@PS1)
+									BEGIN
+										SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'1'));
+										SET @NC2=@NC2-1;
+									END
+								ELSE IF(@NC1=@PS2 and @NC2=@PS2)
+									BEGIN
+										SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'1'));
+										SET @NC2=@NC2-1;
+									END
+								ELSE IF(@NC1=@PS1 and @NC2=@PS2)
+									BEGIN
+										SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'2'));
+										SET @NC2=@NC2-1;
+									END
+								ELSE IF(@NC1=@PS2 and @NC2=@PS1)
+									BEGIN
+										SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'2'));
+										SET @NC2=@NC2-1;
+									END
+								ELSE
+									BEGIN
+										SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'0'));
+										SET @NC2=@NC2-1;
+									END	
+							END
+							SET @NC1=@NC1-1;
+					END
+					----------
+				INSERT INTO Partidas(ID_SJ,Turno,MatrizJuego)VALUES(@IDS,1,@TXTPLANO);
 				SET @success = 1 -- exito
 				SELECT @success
 			END;			
 	END;
 GO
+
+
+
+ALTER PROCEDURE misSesiones
+		@correo VARCHAR(200),
+		@filtro CHAR(1),
+		@success BIT OUTPUT
+AS 
+BEGIN
+			IF((SELECT COUNT(*) FROM SesionesJuego as sj inner join (SELECT * FROM Usuarios as u inner join Usuarios_SesionJuego as us on u.ID=us.ID_Usuario and u.Correo=@correo )as j on j.ID_SJ=sj.ID and (sj.Estado=1 or sj.Estado=0))=0)
+						BEGIN 
+							SET @success = 0 -- error
+							SELECT @success
+						END;
+			ELSE
+				BEGIN
+					IF(@filtro='1')
+						BEGIN
+							SET @success = 1 -- exito
+							SELECT * FROM(SELECT sj.Estado,sj.NumPartidas,sj.N_Tablero,sj.NivelDificultad,sj.TipoPartida,j.ID_SJ FROM SesionesJuego as sj inner join (SELECT * FROM Usuarios as u inner join Usuarios_SesionJuego as us on u.ID=us.ID_Usuario and u.Correo=@correo )as j
+							on j.ID_SJ=sj.ID and sj.Estado=1 ) as temp
+							inner join (SELECT @success as succces) AS temp1 on temp.Estado=1
+						END
+					ELSE
+						BEGIN
+							 SET @success = 1 -- exito
+							SELECT * FROM(SELECT sj.Estado,sj.NumPartidas,sj.N_Tablero,sj.NivelDificultad,sj.TipoPartida,j.ID_SJ FROM SesionesJuego as sj inner join (SELECT * FROM Usuarios as u inner join Usuarios_SesionJuego as us on u.ID=us.ID_Usuario and u.Correo=@correo)as j
+							on j.ID_SJ=sj.ID and sj.Estado=0 ) as temp
+							inner join (SELECT @success as succces) AS temp1 on temp.Estado=0
+						END
+				END;
+END
+
+
+EXEC misSesiones 'landresf3638@gmail.com','0',0
+
+DECLARE @success INT=0;
+
+							
+							
+
+
+SELECT * FROM SesionesJuego
+
+
+
+
+
+
+
+DECLARE @N INT=6;
+DECLARE @NC1 INT=@N;
+DECLARE @TXTPLANO NVARCHAR(MAX)='';
+DECLARE @PS1 INT=@N/2;
+DECLARE @PS2 INT=@PS1+1;
+WHILE(@NC1>0)
+	BEGIN
+		SELECT @NC1
+		DECLARE @NC2 INT=@N;
+		WHILE(@NC2>0)
+			BEGIN
+				IF(@NC1=@PS1 and @NC2=@PS1)
+					BEGIN
+						SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'1'));
+						SET @NC2=@NC2-1;
+					END
+				ELSE IF(@NC1=@PS2 and @NC2=@PS2)
+					BEGIN
+						SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'1'));
+						SET @NC2=@NC2-1;
+					END
+				ELSE IF(@NC1=@PS1 and @NC2=@PS2)
+					BEGIN
+						SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'2'));
+						SET @NC2=@NC2-1;
+					END
+				ELSE IF(@NC1=@PS2 and @NC2=@PS1)
+					BEGIN
+						SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'2'));
+						SET @NC2=@NC2-1;
+					END
+				ELSE
+					BEGIN
+						SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'0'));
+						SET @NC2=@NC2-1;
+					END	
+			END
+			SET @NC1=@NC1-1;
+	END
+	
+
+
+
+
+
+
+
+
+
+
+
 
 ----------------------------------------------
 --				Partidas

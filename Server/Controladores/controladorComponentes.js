@@ -57,6 +57,12 @@ exports.insertarUsuarioSesion = function(rRequest, rResponse){
         rResponse.send(data);
     });
 };
+exports.misSesiones = function(rRequest, rResponse){
+    controlador.misSesiones(rRequest.body, function(data){
+        console.log(data);
+        rResponse.send(data);
+    });
+};
 exports.selectComponente = function(rRequest, rResponse){
     logicaComponente.seleccionarComponente(function(data){
         rResponse.send(data.data);

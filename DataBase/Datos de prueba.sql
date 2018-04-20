@@ -20,6 +20,9 @@ SELECT * FROM Usuarios_SesionJuego
 SELECT * FROM Usuarios
 EXEC insertUsuario 'landresf10@hotmail.es','1234','nnnnn',
 
-EXEC insertSesionJuego 6,5,'#NNHG',1,1,'landresf3638@gmail.com','#NNNDQ',0
+
+EXEC insertSesionJuego 2,8,3,2,1,'#000000',0
+
+SELECT * FROM Partidas
 
 EXEC insertUsuario_SesionJuego 'landresf3638@gmail.com',2,'#FF8000',0

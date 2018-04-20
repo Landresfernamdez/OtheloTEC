@@ -144,6 +144,30 @@ exports.selectSesionesJuegoDisponibles = function(callback) {
     // se usa executeRequest porque es el destinado para escribir consultas desde aca en vez de llamar procedimientos almacenados
     sqlConection.executeRequest(request, callback); 
 }
+
+exports.misSesiones = function misSesiones(datos, callback) {
+    var request = new Request('misSesiones', function(err) { // nombre de procedimiento en la base de datos
+        if (err) {
+            callback({
+                success: false,
+                error: request.error,
+                title: "Error",
+                message: "Sucedio un error en la inserción de los datos",
+                type: "error"
+            })
+        }
+    });
+    console.log(datos);
+    request.addParameter('correo', TYPES.VarChar, datos.idsesion);
+    request.addParameter('filtro', TYPES.Char, datos.correo);
+    request.addOutputParameter('success', TYPES.Bit);
+    sqlConection.callProcedure(request, function(res) {
+        console.log("prueba");
+        console.log(res);
+        callback(res);
+    });
+}
+
 exports.selectComponente = function(callback) {
     var request = new Request("SELECT * FROM Componentes", function(err) {
         if (err) {
