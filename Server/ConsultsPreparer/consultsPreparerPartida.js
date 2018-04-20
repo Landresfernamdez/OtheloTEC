@@ -158,8 +158,8 @@ exports.misSesiones = function misSesiones(datos, callback) {
         }
     });
     console.log(datos);
-    request.addParameter('correo', TYPES.VarChar, datos.idsesion);
-    request.addParameter('filtro', TYPES.Char, datos.correo);
+    request.addParameter('correo', TYPES.VarChar, datos.correo);
+    request.addParameter('filtro', TYPES.Char, datos.filtro);
     request.addOutputParameter('success', TYPES.Bit);
     sqlConection.callProcedure(request, function(res) {
         console.log("prueba");

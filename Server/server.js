@@ -61,7 +61,7 @@ app.post('/insertarUsuario',componenteCtrl.insertarUsuario);
 app.post('/agregarSesion',componenteCtrl.insertarSesion);
 app.get('/selectSesionesJuegoDisponibles', componenteCtrl.selectSesionesJuegoDisponibles);
 app.post('/putUsuarioasesiondeJuego',componenteCtrl.insertarUsuarioSesion);
-app.post('misSesiones',componenteCtrl.misSesiones);
+app.post('/misSesiones',componenteCtrl.misSesiones);
 /*
 ======================================================================================
 >  Pone el servidor en escucha de peticiones, lo levanta en el puerto especificado.  <

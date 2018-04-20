@@ -6,7 +6,9 @@ var matriz = [[0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0]], listaFichas = [], jugadas=[];
-              
+  /*
+  
+  */            
 /**
  * Funcion encargada de convertir un string en una matriz cuadrada dependiendo de una cantidad n de elementos.
  * Ejemplo: 'abcdefghi' -> [[a,b,c],[d,e,f],[g,h,i]]

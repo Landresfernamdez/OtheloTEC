@@ -22,7 +22,9 @@ class  Menu extends  Component{
     constructor(props){
         super(props)
         this.state={
-            sesiones:[]
+            sesiones:[],
+            missesiones:[],
+            filtro:'1'
         }
     }
       
@@ -82,7 +84,35 @@ class  Menu extends  Component{
                 console.log(error);
                 return error.data
             })
-        }  
+        } 
+    recuperaramisSesiones=()=>{
+            var filtro="";
+            if(document.getElementById("selfiltro")==null){
+                filtro="3"
+            }
+            else if(document.getElementById("selfiltro").value=="Activas"){
+                filtro="1";
+            }
+            else if(document.getElementById("selfiltro").value=="Avaibles"){
+                filtro="3";
+            }
+            else{
+                filtro="2";
+            }
+            console.log(filtro);
+            var request={
+                correo:localStorage.getItem("correo"),
+                filtro:filtro
+                }
+            axios.post('http://localhost:8080/misSesiones',request).then(response=>{
+                    //localStorage.setItem("sesiones",JSON.stringify(response.data));
+                    this.setState({filtro:filtro,sesiones:response.data.data});
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    return error.data
+                })
+            }       
     unirseSesion=(e)=>{
         e.preventDefault();
         const  {param}=e.target.dataset;
@@ -111,7 +141,9 @@ class  Menu extends  Component{
 
     }    
     render(){
-        this.recuperaraSesiones();
+        this.recuperaramisSesiones();
+        //this.recuperaraSesiones();
+        //this.recuperaramisSesiones();
         const divS={textAlign:'justify'
                     ,marginLeft:'15%',
                     marginRight:'15%',
@@ -124,24 +156,24 @@ class  Menu extends  Component{
                     display:'block',
                     marginTop:'15%'
                 }
-        //this.setState({sesiones:JSON.parse(localStorage.getItem(sesiones))});
+        //Sesiones habilitadas
         const filas=[];
         var sesiones=this.state.sesiones;
-        console.log("mis sesiones");
+        console.log("mis sesiones habilitadas");
         console.log(sesiones);
         var mail=localStorage.getItem("correo");
         console.log(mail);
         for(var x=0;x<sesiones.length;x++){
-            if(sesiones[x].Correo==mail){
-                sesiones.splice(x,1);
-            }
+                var nickname="Yo";
+                if(this.state.filtro=='3'){
+                    nickname=sesiones[x].Nickname;
+                }
+                filas[x]=<ListGroupItem><b>Creador: </b>{nickname}   <b>N del tablero:</b> {sesiones[x].N_Tablero} <b>Nivel de dificultad:</b> {sesiones[x].NivelDificultad}
+                <b>Partidas:</b> {sesiones[x].NumPartidas}   
+                <button  data-param={JSON.stringify({idsesion:sesiones[x].ID,correo:mail,color:document.getElementById("inputColorf2").value})} onClick={this.unirseSesion}>Unirse a sesion
+                        </button><button>Detalles</button></ListGroupItem>
         }
-        for(var x=0;x<sesiones.length;x++){
-            filas[x]=<ListGroupItem><b>Creador: </b>{sesiones[x].Nickname}   <b>N del tablero:</b> {sesiones[x].N_Tablero} <b>Nivel de dificultad:</b> {sesiones[x].NivelDificultad}
-            <b>Partidas:</b> {sesiones[x].NumPartidas}   
-            <button  data-param={JSON.stringify({idsesion:sesiones[x].ID,correo:mail,color:document.getElementById("inputColorf2").value})} onClick={this.unirseSesion}>Unirse a sesion
-                    </button></ListGroupItem>
-        }
+        
         return(
             <html>
                     <head>
@@ -199,7 +231,7 @@ class  Menu extends  Component{
                         <Tab eventKey={2} title="Create session">
                            <div style={divS1}> 
                            <b>Select the number of games</b><input type="number" min="1" id="inpPartidas"></input><br></br>
-                           <b>Select the N of the board</b><input type="number" min="1"id="inputN"></input><br></br>
+                           <b>Select the N of the board</b><input type="number" min="6"id="inputN"></input><br></br>
                            <b>Select the color of your game piece</b><input type="color" id="colorFicha"></input><br></br>
                            <b>Select the type of game</b><select class="form-control" id="seltipo">
                             <option>Multiplayer</option>
@@ -214,13 +246,20 @@ class  Menu extends  Component{
                             <button type="button" class="btn btn-primary" onClick={this.insertSession}>Crear sesion de juego</button>
                            </div>
                         </Tab>
-                        <Tab eventKey={3} title="My sessions">
-                            <b>My ssesions</b>
-                        </Tab>
-                        <Tab eventKey={4} title="Sessions avaible" >
-                            <b>Select a color of your chip and after select the game</b><input type="color" id="inputColorf2"></input>
+                        <Tab eventKey={3} title="My sessions" >
+                        <b>Select a color of your chip and after select the game avaible</b><input type="color" id="inputColorf2"></input>
+                        <b>Select the type of session: </b><select class="form-control" id="selfiltro" 
+                        >
+                            <option >Activas</option>
+                            <option >Inactivas</option>
+                            <option>Avaibles</option>
+                           </select>
                             <ListGroup>
-                            {filas}
+                                {filas}
+                            </ListGroup>
+                        </Tab>
+                        <Tab eventKey={4} title="Sessions avaible">
+                            <ListGroup>
                             </ListGroup>
                         </Tab>
                     </Tabs>
