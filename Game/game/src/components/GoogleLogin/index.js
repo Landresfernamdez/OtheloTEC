@@ -18,7 +18,6 @@ class GoogleLogin extends Component{
             correo:''
         }
     }
-    
     componentDidMount=()=>{
         (function() {
             var e = document.createElement("script");
@@ -191,7 +190,7 @@ class GoogleLogin extends Component{
                         </FormGroup>
                         <FormGroup>
                             <div style={divContainer}>
-                                <Button  onClick={()=>this.validarCredenciales()}>Sign in</Button>
+                                <Button  bsStyle="primary" bsSize="small" onClick={()=>this.validarCredenciales()}>Sign in</Button>
                                 <img src={google} title="google login" alt="google" onClick={ () => this.googleLogin() }/>
                             </div>
                         </FormGroup>

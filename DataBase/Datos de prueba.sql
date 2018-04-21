@@ -15,7 +15,7 @@ INSERT INTO Partidas(ID_SJ,MatrizJuego) VALUES (1,'00000000000000120000210000000
 
 SELECT * FROM SesionesJuego
 
-
+SELECT * FROM Partidas
 SELECT * FROM Usuarios_SesionJuego
 SELECT * FROM Usuarios
 EXEC insertUsuario 'landresf10@hotmail.es','1234','nnnnn',

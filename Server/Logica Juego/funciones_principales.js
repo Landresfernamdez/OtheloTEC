@@ -997,6 +997,7 @@ exports.validarMovimiento = function(datos,callback){
                         //Si el jugador 1 tiene fichas pero ninguna de las fichas tiene opcion de jugar
                         //console.log("Movimiento valido\n" + listaFichas);
                         var nivel=3;
+                        
                         callback({
                             success: true,
                             title: "Jugador 1 sin fichas",

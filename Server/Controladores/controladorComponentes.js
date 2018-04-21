@@ -63,6 +63,12 @@ exports.misSesiones = function(rRequest, rResponse){
         rResponse.send(data);
     });
 };
+exports.detalles = function(rRequest, rResponse){
+    controlador.detalles(rRequest.body, function(data){
+        console.log(data);
+        rResponse.send(data);
+    });
+};
 exports.selectComponente = function(rRequest, rResponse){
     logicaComponente.seleccionarComponente(function(data){
         rResponse.send(data.data);

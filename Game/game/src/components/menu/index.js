@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import 'react-addons-transition-group';
-import {Tabs,Tab,FormControl,ListGroup,ListGroupItem} from 'react-bootstrap';
+import {Tabs,Tab,FormControl,ListGroup,ListGroupItem,Modal,Button} from 'react-bootstrap';
 import GoogleLogin from '.././GoogleLogin/index';
 import "./index.css";
 import axios from 'axios';
@@ -21,13 +21,22 @@ import {
 class  Menu extends  Component{
     constructor(props){
         super(props)
+        this.handleShow = this.handleShow.bind(this);
+        this.handleClose = this.handleClose.bind(this);
         this.state={
             sesiones:[],
             missesiones:[],
-            filtro:'1'
+            filtro:'1',
+            show:false,
+            partidas:[{PuntosP1:0,PuntosP1:0,winner:0}]
         }
     }
-      
+    handleClose(){
+        this.setState({ show: false });
+      }
+      handleShow(){
+        this.setState({ show: true });
+      }
     handleSelect=(selectedKey)=>{
         alert(`selected ${selectedKey}`);
          }
@@ -144,7 +153,30 @@ class  Menu extends  Component{
         else{
             alert("Select a session avaible");
         }
-    }    
+    }
+    
+    verdetalles=(e)=>{
+        e.preventDefault();
+        const  {param}=e.target.dataset;
+        var data=JSON.parse(param);
+            axios.post('http://localhost:8080/detallesSesion',{
+                id_sesion:data.idsesion
+                })
+                .then(result => {
+                    console.log(result);
+                    if(result.data.success==true){
+                        this.setState({partidas:result.data.data})
+                        this.handleShow();
+                    }
+                    else{
+                        alert("Select a game desactive")
+                        }
+                    }
+                )
+                .catch(error=> {
+                console.log(error);
+                });
+    }     
     render(){
         this.recuperaramisSesiones();
         //this.recuperaraSesiones();
@@ -154,7 +186,8 @@ class  Menu extends  Component{
                     marginRight:'15%',
                     background:'white'
                 }
-        const divS1={textAlign:'justify'
+        const divS1={
+                    textAlign:'justify'
                     ,marginLeft:'30%',
                     marginRight:'15%',
                     background:'white',
@@ -173,12 +206,16 @@ class  Menu extends  Component{
                 if(this.state.filtro=='3'){
                     nickname=sesiones[x].Nickname;
                 }
-                filas[x]=<ListGroupItem><b>Creador: </b>{nickname}   <b>N del tablero:</b> {sesiones[x].N_Tablero} <b>Nivel de dificultad:</b> {sesiones[x].NivelDificultad}
-                <b>Partidas:</b> {sesiones[x].NumPartidas}   
-                <button  data-param={JSON.stringify({idsesion:sesiones[x].ID_SJ,correo:mail,color:document.getElementById("inputColorf2").value})} onClick={this.unirseSesion}>Unirse a sesion
-                        </button><button>Detalles</button></ListGroupItem>
+                filas[x]=<ListGroupItem><b>Creator: </b>{nickname}      <b>N of the board:</b> {sesiones[x].N_Tablero}      <b>Level:</b> {sesiones[x].NivelDificultad}
+                <b>Games:</b> {sesiones[x].NumPartidas}   
+                <Button  data-param={JSON.stringify({idsesion:sesiones[x].ID_SJ,correo:mail,color:document.getElementById("inputColorf2").value})}bsStyle="primary" bsSize="small" onClick={this.unirseSesion}>
+                Join</Button>     <Button data-param={JSON.stringify({idsesion:sesiones[x].ID_SJ})} bsStyle="primary" bsSize="small" onClick={this.verdetalles}>Details</Button></ListGroupItem>
         }
-        
+        var partidas=this.state.partidas;
+        const filasPartidas=[];
+        for(var x=0;x<partidas.length;x++){
+            filasPartidas[x]=<ListGroupItem>{x+1}. <b>Player one points: </b>{partidas[x].PuntosP1}   <b>Player two points:</b> {partidas[x].PuntosP2} <b>Winner:</b>{partidas[x].winner}</ListGroupItem>
+        }
         return(
             <html>
                     <head>
@@ -248,7 +285,7 @@ class  Menu extends  Component{
                             <option>2</option>
                             <option>3</option>
                            </select><br></br>
-                            <button type="button" class="btn btn-primary" onClick={this.insertSession}>Crear sesion de juego</button>
+                            <Button bsStyle="primary" bsSize="small" class="btn btn-primary" onClick={this.insertSession}>Crear sesion de juego</Button>
                            </div>
                         </Tab>
                         <Tab eventKey={3} title="My sessions" >
@@ -262,11 +299,20 @@ class  Menu extends  Component{
                                 {filas}
                             </ListGroup>
                         </Tab>
-                        <Tab eventKey={4} title="Sessions avaible">
+                    </Tabs>;
+                    <Modal show={this.state.show} onHide={this.handleClose}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Modal heading</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
                             <ListGroup>
+                                {filasPartidas}
                             </ListGroup>
-                        </Tab>
-                    </Tabs>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button onClick={this.handleClose}>Close</Button>
+                        </Modal.Footer>
+                    </Modal>
                         </body>
                         </html>
         )

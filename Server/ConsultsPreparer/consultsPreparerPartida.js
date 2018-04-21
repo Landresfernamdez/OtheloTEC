@@ -168,6 +168,27 @@ exports.misSesiones = function misSesiones(datos, callback) {
     });
 }
 
+exports.detalles = function detalles(datos, callback) {
+    var request = new Request('devuelvePartidas', function(err) { // nombre de procedimiento en la base de datos
+        if (err) {
+            callback({
+                success: false,
+                error: request.error,
+                title: "Error",
+                message: "Sucedio un error en la inserción de los datos",
+                type: "error"
+            })
+        }
+    });
+    console.log(datos);
+    request.addParameter('ID_S', TYPES.Int, datos.id_sesion);
+    request.addOutputParameter('success', TYPES.Bit);
+    sqlConection.callProcedure(request, function(res) {
+        console.log("prueba");
+        console.log(res);
+        callback(res);
+    });
+}
 exports.selectComponente = function(callback) {
     var request = new Request("SELECT * FROM Componentes", function(err) {
         if (err) {

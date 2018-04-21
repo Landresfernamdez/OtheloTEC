@@ -147,6 +147,30 @@ exports.misSesiones = function(datos, callback) {
         }
     });
 };
+
+exports.detalles = function(datos, callback) {
+    consultsPreparerPartida.detalles(datos, function(response) {
+        msg = (response.error == 1) ? "Error de conexión" : "Credenciales incorrectas";
+        if (response.success) {
+            callback({
+                success: true,
+                error: response.error,
+                title: "Se recuperaron las partidas con exito",
+                message: "Se recuperaron las partidas con exito",
+                data: response.data,
+                type: "success"
+            })
+        } else {
+            callback({
+                success: false,
+                message: msg,
+                title: "Error",
+                error: response.error,
+                type: "error"
+            })
+        }
+    });
+};
 exports.seleccionarSesionesJuegoDisponibles = function(callback) {
     consultsPreparerPartida.selectSesionesJuegoDisponibles( function(response) {
         if (response.success) {
