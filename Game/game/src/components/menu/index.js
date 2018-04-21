@@ -37,12 +37,12 @@ class  Menu extends  Component{
         var color=document.getElementById("colorFicha").value;
         var tipo=document.getElementById("seltipo").value;
         var nivel=document.getElementById("selnivel").value;
-        if(parseInt(n)>6){
+        if((parseInt(n)%2)==0){
             if(tipo=="Multiplayer"){
                 tipo=2;
             }
             if(tipo=="Individual game"){
-                tipo=1;
+                tipo=1; 
             }
             if(tipo=="PC vs PC"){
                 tipo=3;
@@ -71,7 +71,7 @@ class  Menu extends  Component{
                                                 });
         }
         else{
-            alert("The n of the board must be greater than 6");
+            alert("The n must be a even number");
         }
     }
     recuperaraSesiones=()=>{
@@ -99,17 +99,19 @@ class  Menu extends  Component{
             else{
                 filtro="2";
             }
-            console.log(filtro);
+            //console.log(filtro);
             var request={
                 correo:localStorage.getItem("correo"),
                 filtro:filtro
                 }
+            //console.log(request);    
             axios.post('http://localhost:8080/misSesiones',request).then(response=>{
                     //localStorage.setItem("sesiones",JSON.stringify(response.data));
+                    //console.log(response);
                     this.setState({filtro:filtro,sesiones:response.data.data});
                 })
                 .catch(function (error) {
-                    console.log(error);
+                    //console.log(error);
                     return error.data
                 })
             }       
@@ -117,28 +119,31 @@ class  Menu extends  Component{
         e.preventDefault();
         const  {param}=e.target.dataset;
         var data=JSON.parse(param);
-        axios.post('http://localhost:8080/putUsuarioasesiondeJuego',{
-                                                correo:data.correo,
-                                                color:data.color,
-                                                idsesion:data.idsesion
-                                                })
-                                                .then(result => {
-                                                    console.log(result);
-                                                    if(result.data.success==true){
+        console.log("prueba")
+        console.log(data)
+        if(this.state.filtro=='3'){
+            axios.post('http://localhost:8080/putUsuarioasesiondeJuego',{
+                correo:data.correo,
+                color:data.color,
+                idsesion:data.idsesion
+                })
+                .then(result => {
+                    console.log(result);
+                    if(result.data.success==true){
 
-                                                    }
-                                                    else{
-                                                        alert("Select other color");
-                                                        }
-                                                    }
-                                                )
-                                                .catch(error=> {
-                                                console.log(error);
-                                                });
-        
-
-
-
+                    }
+                    else{
+                        alert("Select other color");
+                        }
+                    }
+                )
+                .catch(error=> {
+                console.log(error);
+                });
+        }
+        else{
+            alert("Select a session avaible");
+        }
     }    
     render(){
         this.recuperaramisSesiones();
@@ -159,10 +164,10 @@ class  Menu extends  Component{
         //Sesiones habilitadas
         const filas=[];
         var sesiones=this.state.sesiones;
-        console.log("mis sesiones habilitadas");
-        console.log(sesiones);
+       // console.log("mis sesiones habilitadas");
+        //console.log(sesiones);
         var mail=localStorage.getItem("correo");
-        console.log(mail);
+        //console.log(mail);
         for(var x=0;x<sesiones.length;x++){
                 var nickname="Yo";
                 if(this.state.filtro=='3'){
@@ -170,7 +175,7 @@ class  Menu extends  Component{
                 }
                 filas[x]=<ListGroupItem><b>Creador: </b>{nickname}   <b>N del tablero:</b> {sesiones[x].N_Tablero} <b>Nivel de dificultad:</b> {sesiones[x].NivelDificultad}
                 <b>Partidas:</b> {sesiones[x].NumPartidas}   
-                <button  data-param={JSON.stringify({idsesion:sesiones[x].ID,correo:mail,color:document.getElementById("inputColorf2").value})} onClick={this.unirseSesion}>Unirse a sesion
+                <button  data-param={JSON.stringify({idsesion:sesiones[x].ID_SJ,correo:mail,color:document.getElementById("inputColorf2").value})} onClick={this.unirseSesion}>Unirse a sesion
                         </button><button>Detalles</button></ListGroupItem>
         }
         
@@ -247,9 +252,8 @@ class  Menu extends  Component{
                            </div>
                         </Tab>
                         <Tab eventKey={3} title="My sessions" >
-                        <b>Select a color of your chip and after select the game avaible</b><input type="color" id="inputColorf2"></input>
-                        <b>Select the type of session: </b><select class="form-control" id="selfiltro" 
-                        >
+                        <b>Select a color of your chip and after select the game avaible</b><input type="color" id="inputColorf2"></input><br></br>
+                        <b>Select the type of session: </b><select class="form-control" id="selfiltro">
                             <option >Activas</option>
                             <option >Inactivas</option>
                             <option>Avaibles</option>

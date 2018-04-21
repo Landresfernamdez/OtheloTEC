@@ -230,7 +230,9 @@ ALTER PROCEDURE misSesiones
 		@success BIT OUTPUT
 AS 
 BEGIN
-			IF((SELECT COUNT(*) FROM SesionesJuego as sj inner join (SELECT * FROM Usuarios as u inner join Usuarios_SesionJuego as us on u.ID=us.ID_Usuario and u.Correo=@correo )as j on j.ID_SJ=sj.ID and (sj.Estado=1 or sj.Estado=0))=0)
+			IF((SELECT COUNT(*) FROM SesionesJuego as sj inner join (SELECT * FROM Usuarios as u inner join Usuarios_SesionJuego as us on u.ID=us.ID_Usuario and u.Correo=@correo )as j on j.ID_SJ=sj.ID and (sj.Estado=1 or sj.Estado=0))=0 or (SELECT COUNT(*) FROM Usuarios as us inner join 
+					(SELECT * FROM SesionesJuego  as sj inner join Usuarios_SesionJuego as u on  sj.Estado = 0 and u.ID_SJ=sj.ID) as temp
+							on us.ID=temp.ID AND us.Correo!=@correo)=0)
 						BEGIN 
 							SET @success = 0 -- error
 							SELECT @success
@@ -238,24 +240,31 @@ BEGIN
 			ELSE
 				BEGIN
 					IF(@filtro='1')
-						BEGIN
+						BEGIN 
 							SET @success = 1 -- exito
 							SELECT * FROM(SELECT sj.Estado,sj.NumPartidas,sj.N_Tablero,sj.NivelDificultad,sj.TipoPartida,j.ID_SJ FROM SesionesJuego as sj inner join (SELECT * FROM Usuarios as u inner join Usuarios_SesionJuego as us on u.ID=us.ID_Usuario and u.Correo=@correo )as j
 							on j.ID_SJ=sj.ID and sj.Estado=1 ) as temp
 							inner join (SELECT @success as succces) AS temp1 on temp.Estado=1
 						END
-					ELSE
+					ELSE IF(@filtro='2')
 						BEGIN
 							 SET @success = 1 -- exito
 							SELECT * FROM(SELECT sj.Estado,sj.NumPartidas,sj.N_Tablero,sj.NivelDificultad,sj.TipoPartida,j.ID_SJ FROM SesionesJuego as sj inner join (SELECT * FROM Usuarios as u inner join Usuarios_SesionJuego as us on u.ID=us.ID_Usuario and u.Correo=@correo)as j
 							on j.ID_SJ=sj.ID and sj.Estado=0 ) as temp
 							inner join (SELECT @success as succces) AS temp1 on temp.Estado=0
 						END
+					ELSE
+						BEGIN
+						SET @success = 1 -- exito
+						SELECT * FROM(SELECT us.ID,us.Correo,us.Nickname,temp.ID_SJ,temp.N_Tablero,temp.NivelDificultad,temp.TipoPartida,temp.NumPartidas FROM Usuarios as us inner join 
+						(SELECT * FROM SesionesJuego  as sj inner join Usuarios_SesionJuego as u on  sj.Estado = 0 and u.ID_SJ=sj.ID) as temp
+						 on us.ID=temp.ID) AS todo inner join (SELECT @success as succces) as ex on todo.Correo!=@correo
+						END
 				END;
 END
 
 
-EXEC misSesiones 'landresf3638@gmail.com','0',0
+EXEC misSesiones 'landresf3638@gmail.com','2',0
 
 DECLARE @success INT=0;
 
