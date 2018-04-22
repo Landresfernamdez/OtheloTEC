@@ -124,7 +124,6 @@ var validarArribaPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -191,7 +190,6 @@ var validarAbajoPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -258,7 +256,6 @@ var validarDerechaPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -325,7 +322,6 @@ var validarIzquierdaPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -397,7 +393,6 @@ var validarArribaDerechaPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -468,7 +463,6 @@ var validarAbajoDerechaPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -539,7 +533,6 @@ var validarArribaIzquierdaPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -610,7 +603,6 @@ var validarAbajoIzquierdaPC = function (x,y,jug){
     if (matriz[x][y] == 0 & listaFichasNuevas.length > 0){ // la ficha uno es del jugador, las otras son del enemigo y la ultima es del jugador
         listaFichasNuevas.push({x:x,y:y});
         var temp={fichas:listaFichasNuevas,pts:pts};
-        //console.log("entro a prueba");
         if(jug==2){
             jugadas.push(temp);
         }
@@ -632,8 +624,7 @@ function ordenarLista(lista){
         }
         if (parseFloat(a.pts) < parseFloat(b.pts)){
             return 1;
-        }
-        // a must be equal to b
+        }// a must be equal to b
         return 0;
     });
     return lista;
@@ -664,37 +655,28 @@ function fichasJugadorXtienenJugada(fichasPC,jugador){
     for(var i = 0;i < fichasPC.length; i++){
         var x = fichasPC[i].x, y = fichasPC[i].y, jug = jugador;
         //validar todas las direcciones
-        //Listo
         if(validarArribaPC(x,y,jug)){
-            console.log("Entro en arriba\n");
             return true;
         }
         if(validarAbajoPC(x,y,jug)){
-            console.log("Entro en abajo\n");
             return true;
         }
         if(validarDerechaPC(x,y,jug)){
-            console.log("Entro en derecha\n");
             return true;
         }
         if(validarIzquierdaPC(x,y,jug)){
-            console.log("Entro en izquierda\n");
             return true;
         }
         if(validarArribaDerechaPC(x,y,jug)){
-            console.log("Entro en arriba-derecha\n");
             return true;
         }
         if(validarAbajoDerechaPC(x,y,jug)){
-            console.log("Entro en abajo-derecha\n");
             return true;
         }
         if(validarArribaIzquierdaPC(x,y,jug)){
-            console.log("Entro en arriba-izquierda\n");
             return true;
         }
         if(validarAbajoIzquierdaPC(x,y,jug)){
-            console.log("Entro en abajo-izquierda\n");
             return true;
         }
     }
@@ -709,30 +691,14 @@ function posiblesJugadas(fichasPC){
         var x = fichasPC[i].x, y = fichasPC[i].y, jug = 2;
         //validar todas las direcciones
         //Listo
-        if(validarArribaPC(x,y,jug)){
-            console.log("Entro en arriba\n");
-        }
-        if(validarAbajoPC(x,y,jug)){
-            console.log("Entro en abajo\n");
-        }
-        if(validarDerechaPC(x,y,jug)){
-            console.log("Entro en derecha\n");
-        }
-        if(validarIzquierdaPC(x,y,jug)){
-            console.log("Entro en izquierda\n");
-        }
-        if(validarArribaDerechaPC(x,y,jug)){
-            console.log("Entro en arriba-derecha\n");
-        }
-        if(validarAbajoDerechaPC(x,y,jug)){
-            console.log("Entro en abajo-derecha\n");
-        }
-        if(validarArribaIzquierdaPC(x,y,jug)){
-            console.log("Entro en arriba-izquierda\n");
-        }
-        if(validarAbajoIzquierdaPC(x,y,jug)){
-            console.log("Entro en abajo-izquierda\n");
-        }
+        validarArribaPC(x,y,jug)
+        validarAbajoPC(x,y,jug)
+        validarDerechaPC(x,y,jug)
+        validarIzquierdaPC(x,y,jug)
+        validarArribaDerechaPC(x,y,jug)
+        validarAbajoDerechaPC(x,y,jug)
+        validarArribaIzquierdaPC(x,y,jug)
+        validarAbajoIzquierdaPC(x,y,jug)
     }
 }
 
@@ -765,56 +731,39 @@ exports.validarMovimiento = function(datos,callback){
             {
                 //validar todas las direcciones
                 if (validarArriba(x, y, jug)) {
-                    console.log("Entro en arriba\n");
                     validas++;
                     cambiarColor(x,y,jug);
-                    mostrarMatriz(matriz);
                 }
                 if (validarAbajo(x, y, jug)) {
-                    console.log("Entro en abajo\n");
                     validas++;
                     cambiarColor(x,y,jug);
-                    mostrarMatriz(matriz);
                 }
                 if (validarDerecha(x, y, jug)) {
-                    console.log("Entro en derecha\n");
                     validas++;
                     cambiarColor(x,y,jug);
-                    mostrarMatriz(matriz);
                 }
                 if (validarIzquierda(x, y, jug)) {
-                    console.log("Entro en izquierda\n");
                     validas++;
                     cambiarColor(x,y,jug);
-                    mostrarMatriz(matriz);
                 }
                 if (validarArribaDerecha(x, y, jug)) {
-                    console.log("Entro en arriba-derecha\n");
                     validas++;
                     cambiarColor(x,y,jug);
-                    mostrarMatriz(matriz);
                 }
                 if (validarAbajoDerecha(x, y, jug)) {
-                    console.log("Entro en abajo-derecha\n");
                     validas++;
                     cambiarColor(x,y,jug);
-                    mostrarMatriz(matriz);
                 }
                 if (validarArribaIzquierda(x, y, jug)) {
-                    console.log("Entro en arriba-izquierda\n");
                     validas++;
                     cambiarColor(x,y,jug);
-                    mostrarMatriz(matriz);
                 }
                 if (validarAbajoIzquierda(x, y, jug)) {
-                    console.log("Entro en abajo-izquierda\n");
                     validas++;
                     cambiarColor(x,y,jug);
-                    mostrarMatriz(matriz);
                 }
                 if (validas == 0) {
                     nivel = 1;
-                    //console.log("Movimiento invalido\n" + listaFichas);
                     callback({
                         success: false,
                         title: "Error",
@@ -832,7 +781,6 @@ exports.validarMovimiento = function(datos,callback){
                     else {
                         turno = 1;
                     }
-                    //console.log("Movimiento valido\n" + listaFichas);
                     callback({
                         success: true,
                         title: "Movimiento exitoso",
@@ -855,63 +803,46 @@ exports.validarMovimiento = function(datos,callback){
                             var x1=x,y1=y,jug1=jug;
                             //validar todas las direcciones
                             if(validarArriba(x1,y1,jug1)){
-                                console.log("Entro en arriba\n");
                                 validas++;
                                 cambiarColor(x,y,jug);
-                                //mostrarMatriz(matriz);
                             }
                             var x2=x,y2=y,jug2=jug;
                             if(validarAbajo(x2,y2,jug2)){
-                                console.log("Entro en abajo\n");
                                 validas++;
                                 cambiarColor(x,y,jug);
-                                //mostrarMatriz(matriz);
                             }
                             var x3=x,y3=y,jug3=jug;
                             if(validarDerecha(x3,y3,jug3)){
-                                console.log("Entro en derecha\n");
                                 validas++;
                                 cambiarColor(x,y,jug);
-                                //mostrarMatriz(matriz);
                             }
                             var x4=x,y4=y,jug4=jug;
                             if(validarIzquierda(x4,y4,jug4)){
-                                console.log("Entro en izquierda\n");
                                 validas++;
                                 cambiarColor(x,y,jug);
-                                //mostrarMatriz(matriz);
                             }
                             var x5=x,y5=y,jug5=jug;
                             if(validarArribaDerecha(x5,y5,jug5)){
-                                console.log("Entro en arriba-derecha\n");
                                 validas++;
                                 cambiarColor(x,y,jug);
-                                //mostrarMatriz(matriz);
                             }
                             var x6=x,y6=y,jug6=jug;
                             if(validarAbajoDerecha(x6,y6,jug6)){
-                                console.log("Entro en abajo-derecha\n");
                                 validas++;
                                 cambiarColor(x,y,jug);
-                                //mostrarMatriz(matriz);
                             }
                             var x7=x,y7=y,jug7=jug;
                             if(validarArribaIzquierda(x7,y7,jug7)){
-                                console.log("Entro en arriba-izquierda\n");
                                 validas++;
                                 cambiarColor(x,y,jug);
-                                //mostrarMatriz(matriz);
                             }
                             var x8=x,y8=y,jug8=jug;
                             if(validarAbajoIzquierda(x8,y8,jug8)){
-                                console.log("Entro en abajo-izquierda\n");
                                 validas++;
                                 cambiarColor(x,y,jug);
-                                //mostrarMatriz(matriz);
                             }
                             if (validas == 0){
                                 nivel=3;
-                                //console.log("Movimiento invalido\n" + listaFichas);
                                 callback({
                                     success: false,
                                     title: "Error",
@@ -1098,6 +1029,12 @@ exports.validarMovimiento = function(datos,callback){
                     })
                 }
             }
+        }
+        else if (datos.tipo == 3){
+
+        }
+        else{
+            
         }
     } catch (error) {
         console.log(error.TypeError);
