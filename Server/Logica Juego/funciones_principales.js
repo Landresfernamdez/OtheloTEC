@@ -1133,3 +1133,18 @@ var cambiarColor = function (x,y,jug) {
 var cambiarColorPC = function (x,y,jug) {
     matriz[x][y] = jug;
 }
+//probar porque no esta lista
+var verificarMasComidas = function(listaFichas,jug){
+    var cantBuenas = 0;
+    // al cambiar fichas de color, esas fichas pueden generar mas jugadas
+    for (let i = 0; i < listaFichas.length; i++) {
+        for (let j = 0; j < listaFichas.length; j++) {
+            cantBuenas = revalidarDirecciones(listaFichas[i].x,listaFichas[i].y,jug);
+            if (cantBuenas > 0){
+                for (let i = 0; i < listaFichas.length; i++){ // cambiar color de fichas ganadas
+                    matriz[listaFichas[i].x][listaFichas[i].y] = jug;
+                }
+            }
+        }
+    }
+}

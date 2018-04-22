@@ -13,12 +13,11 @@ CREATE TABLE Usuarios
 CREATE TABLE SesionesJuego 
 (
 	ID					INT IDENTITY,
-	Estado				INT				NOT NULL	DEFAULT 0, -- estado de la partida(0 pendiente, 1 fin)
+	Estado				INT				NOT NULL	DEFAULT 2, -- estado de la partida(0 fin partida jugador, 1 pendiente, 2 esperando jugador)
 	NumPartidas			INT				NOT NULL, -- numero de partidas
 	N_Tablero			INT				NOT NULL, -- tamanio del tablero
-	ColorFondo			VARCHAR(10)		NOT NULL, -- color del fondo del tablero
 	NivelDificultad		INT,					  -- facil, medio, dificil un # para cada uno
-	TipoPartida			INT				NOT NULL, -- tipo de partidas (vsUsuario, vsPC, PCvsPC)
+	TipoPartida			INT				NOT NULL, -- tipo de partidas (1 vsUsuario, 2 vsPC, 3 PCvsPC)
 	
 	CONSTRAINT PK_SesionesJuego_ID PRIMARY KEY CLUSTERED (ID)
 );
@@ -43,7 +42,7 @@ CREATE TABLE Partidas
 	PuntosP1			INT				NOT NULL	DEFAULT 2,
 	PuntosP2			INT				NOT NULL	DEFAULT 2,
 	Turno				INT				NOT NULL	DEFAULT 1,
-	EstadoPartida		INT				NOT NULL	DEFAULT 0, --(0 perdiente 1 fin)
+	EstadoPartida		INT				NOT NULL	DEFAULT 1, --(0 fin 1 en juego)
 	MatrizJuego			VARCHAR(8000)	NOT NULL,
 	
 	CONSTRAINT PK_Partidas_ID PRIMARY KEY CLUSTERED (ID),
@@ -52,6 +51,61 @@ CREATE TABLE Partidas
 		REFERENCES	dbo.SesionesJuego (ID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE ChatJuego
+(
+	ID					INT IDENTITY,
+	ID_Partida			INT					NOT NULL,
+	Nickname			VARCHAR(50)			NOT NULL,
+	Mensaje				VARCHAR(400)		NOT NULL,
+
+	CONSTRAINT PK_ChatJuego_ID PRIMARY KEY CLUSTERED (ID),
+
+	CONSTRAINT FK_ChatJuego_ID_Partida	FOREIGN KEY (ID_Partida) 
+		REFERENCES	dbo.Partidas (ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+----------------------------------------------
+--				CHAT DE JUEGO
+----------------------------------------------
+USE OthelloTEC
+GO
+CREATE PROCEDURE insertMensaje
+	@ID_Partida			INT,
+	@Nickname			VARCHAR(50),
+	@Mensaje			VARCHAR(400),
+	@success			BIT		OUTPUT
+AS
+	BEGIN
+		BEGIN TRY
+			INSERT INTO ChatJuego (ID_Partida,Mensaje,Nickname) VALUES (@ID_Partida,@Mensaje,@Nickname);
+			SET @success = 1 -- exito
+			SELECT @success
+		END TRY
+		BEGIN CATCH
+			SET @success = 0 -- error
+			SELECT @success
+		END CATCH
+	END;
+GO
+
+USE OthelloTEC
+GO
+CREATE PROCEDURE eliminarMensajesPartida
+	@ID_Partida			INT,
+	@success			BIT		OUTPUT
+AS
+	BEGIN
+		BEGIN TRY
+			DELETE FROM dbo.ChatJuego WHERE ID_Partida = @ID_Partida;
+			SET @success = 1 -- exito
+			SELECT @success
+		END TRY
+		BEGIN CATCH
+			SET @success = 0 -- error
+			SELECT @success
+		END CATCH
+	END;
+GO
 
 ----------------------------------------------
 --			USUARIOS
@@ -141,7 +195,7 @@ AS
 			END;			
 	END;
 GO
-
+select * from SesionesJuego where Estado = 0
 ----------------------------------------------
 --				SesionJuego
 ----------------------------------------------
@@ -234,12 +288,12 @@ CREATE PROCEDURE editPartida -- LISTO
 	@ID_SJ				INT,
 	@Puntos_P1			INT,
 	@Puntos_P2			INT,
-	@MatrizJuego		VARCHAR(8000),
+	@MatrizJuego		VARCHAR(MAX),
 	@success			BIT		OUTPUT
 AS 
 	BEGIN
 		IF ((SELECT COUNT(*) FROM Partidas AS P WHERE P.ID = @ID) = 1) -- existe la partida
-			BEGIN
+			BEGIN				
 				BEGIN TRY
 					UPDATE dbo.Partidas 
 					SET ID_SJ = @ID_SJ,
@@ -248,19 +302,35 @@ AS
 					PuntosP1 = @Puntos_P1,
 					PuntosP2 = @Puntos_P2,
 					MatrizJuego = @MatrizJuego
-					WHERE ID = @ID;
-					SET @success = 1 -- exito
-					SELECT @success, * FROM Partidas WHERE ID = @ID
+					WHERE ID = @ID AND EstadoPartida = 1; -- que no este terminada la partida
+
+					IF((SELECT COUNT(*) AS NumPartidas FROM Partidas AS P INNER JOIN SesionesJuego AS SJ ON SJ.ID = P.ID_SJ AND SJ.ID = @ID_SJ WHERE P.EstadoPartida = 0) = (SELECT SJ.NumPartidas FROM SesionesJuego AS SJ WHERE SJ.ID = @ID_SJ))
+						BEGIN
+							UPDATE SesionesJuego
+								SET Estado = 0							
+							WHERE ID = @ID_SJ
+
+							SET @success = 1
+							SELECT @success, 0 AS EstadoSesion, ID, ID_SJ, PuntosP1, PuntosP2, Turno AS turno, EstadoPartida, MatrizJuego AS matriz FROM Partidas WHERE ID = @ID -- termino la sesion
+						END
+					ELSE
+						BEGIN
+							SET @success = 1
+							SELECT @success, 1 AS EstadoSesion,  ID, ID_SJ, PuntosP1, PuntosP2, Turno AS turno, EstadoPartida, MatrizJuego AS matriz FROM Partidas WHERE ID = @ID -- continua sesion y partida
+						END
 				END TRY
 				BEGIN CATCH
 					SET @success = 0 -- fallo
-					SELECT @success, 'Fuck'
+					SELECT @success, 1 AS EstadoSesion
 				END CATCH
 			END;
 		ELSE
 			BEGIN
 				SET @success = 0 -- error
-				SELECT @success, 'Error mierda'
+				SELECT @success, 1 AS EstadoSesion
 			END;			
 	END;
 GO
+
+select * from Partidas
+
