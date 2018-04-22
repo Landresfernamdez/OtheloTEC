@@ -922,18 +922,13 @@ exports.validarMovimiento = function(datos,callback){
                             }
                             else{
                                 mostrarMatriz(matriz);
-                                //console.log("prueba");
                                 jugadas=[];
                                 var fichasPC=devuelveFichasPC(2);//Esta lista almacena las fichas de la compu
                                 if(fichasPC.length > 0){
-                                    //console.log("prueba");
                                     if(fichasJugadorXtienenJugada(fichasPC,2)){
                                         ///Juego de la computadora
                                         posiblesJugadas(fichasPC);//Almacena las posibles jugadas de la PC
-                                        //console.log("prueba");
-                                        //console.log("Tamano:"+jugadas.length);
                                         if (jugadas.length == 0){
-                                            //console.log("La IA se quedo sin movimientos\n" + listaFichas);
                                             callback({
                                                 success: false,
                                                 title: "Error",
@@ -1014,8 +1009,7 @@ exports.validarMovimiento = function(datos,callback){
                                                 
                                                 if (response.success == 1){
                                                     console.log('SIII')
-                                                    //matriz = response.matriz;
-                                                    //console.log(matriz);
+
                                                     callback({
                                                         success: true,
                                                         error: response.error,
@@ -1036,7 +1030,7 @@ exports.validarMovimiento = function(datos,callback){
                                                     //return;
                                                 }
                                                 else{
-                                                    console.log('Fuck')
+                                                    console.log('NOOOO')
                                                     matriz = matriz_respaldo;
                                                     callback({
                                                         success: false,
@@ -1060,9 +1054,7 @@ exports.validarMovimiento = function(datos,callback){
                                             });
                                         }
                                     }
-                                    else{
-                                        //Si el jugador 2 tiene fichas pero ninguna posibilidad de jugar gaa el jugador 1
-                                        //console.log("Movimiento valido\n" + listaFichas);
+                                    else{//Si el jugador 2 tiene fichas pero ninguna posibilidad de jugar gaa el jugador 1                                        
                                         callback({
                                             success: true,
                                             title: "IA sin fichas",
@@ -1072,9 +1064,7 @@ exports.validarMovimiento = function(datos,callback){
                                         })
                                     }
                                 }
-                                else{
-                                    //Si la IA se quedo sin fichas gana el jugador 1
-                                    //console.log("Movimiento valido\n" + listaFichas);
+                                else{//Si la IA se quedo sin fichas gana el jugador 1
                                     callback({
                                         success: true,
                                         title: "IA sin fichas",
@@ -1088,9 +1078,7 @@ exports.validarMovimiento = function(datos,callback){
                         else
                             return false; // no puede jugar ahi
                     }
-                    else{
-                        //Si el jugador 1 tiene fichas pero ninguna de las fichas tiene opcion de jugar
-                        //console.log("Movimiento valido\n" + listaFichas);
+                    else{//Si el jugador 1 tiene fichas pero ninguna de las fichas tiene opcion de jugar                        
                         callback({
                             success: true,
                             title: "Jugador 1 sin fichas",
@@ -1100,9 +1088,7 @@ exports.validarMovimiento = function(datos,callback){
                         })
                     }
                 }
-                else{
-                    //Si el jugador 1 se quedo sin fichas entonces gana el jugador 2
-                    //console.log("Movimiento valido\n" + listaFichas);
+                else{//Si el jugador 1 se quedo sin fichas entonces gana el jugador 2                    
                     callback({
                         success: true,
                         title: "Jugador 1 sin fichas",
