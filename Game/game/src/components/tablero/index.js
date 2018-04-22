@@ -6,20 +6,27 @@ class Tablero extends Component{
     constructor(props){
         super(props);
         this.handleClick=this.handleClick.bind(this);
+        console.log(localStorage.getItem("partida"));
         this.state = {
-            numbers: [[0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0],
-                [0,0,0,1,2,0,0,0],
-                [0,0,0,2,1,0,0,0],
-                [0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0]],
+            numbers: this.obtenerMatriz(localStorage.getItem("partida")),
             turno:1,
             tipo:2,
             nivel:3,
             ganador:0
         }
+    }
+    obtenerMatriz = function (matrizString){
+        console.log(matrizString.length);
+        var matrizFinal = [];
+        for (let i = 0; i < matrizString.length; i++) {
+            var matAux = [];
+            for (let j = 0; j < Math.sqrt(matrizString.length); j++) {
+                matAux.push(parseInt(matrizString[i+j]));
+            }
+            matrizFinal.push(matAux);
+            i += Math.sqrt(matrizString.length) - 1;
+        }
+        return matrizFinal;
     }
     handleClick(e){
         e.preventDefault();
@@ -47,6 +54,7 @@ class Tablero extends Component{
          });
     }
     render(){
+        
         var w = window.innerWidth
             || document.documentElement.clientWidth
             || document.body.clientWidth;

@@ -189,6 +189,28 @@ exports.detalles = function detalles(datos, callback) {
         callback(res);
     });
 }
+
+exports.partidaActual = function partidaActual(datos, callback) {
+    var request = new Request('partidaActual', function(err) { // nombre de procedimiento en la base de datos
+        if (err) {
+            callback({
+                success: false,
+                error: request.error,
+                title: "Error",
+                message: "Error en la recuperacion de la partida",
+                type: "error"
+            })
+        }
+    });
+    console.log(datos);
+    request.addParameter('ID_S', TYPES.Int, datos.id_sesion);
+    request.addOutputParameter('success', TYPES.Bit);
+    sqlConection.callProcedure(request, function(res) {
+        console.log("prueba");
+        console.log(res);
+        callback(res);
+    });
+}
 exports.selectComponente = function(callback) {
     var request = new Request("SELECT * FROM Componentes", function(err) {
         if (err) {

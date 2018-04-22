@@ -18,6 +18,7 @@ import {
     NavLink,
     HashRouter
   } from "react-router-dom";
+import Tablero from '../tablero';
 class  Menu extends  Component{
     constructor(props){
         super(props)
@@ -177,6 +178,34 @@ class  Menu extends  Component{
                 console.log(error);
                 });
     }     
+    continueSession=(e)=>{
+        e.preventDefault();
+        const  {param}=e.target.dataset;
+        var data=JSON.parse(param);
+        var partida={};
+            axios.post('http://localhost:8080/partidaActual',{
+                id_sesion:data.idsesion
+                })
+                .then(result => {
+                    console.log(result);
+                    if(result.data.success==true){
+                        //this.setState({partidas:result.data.data})
+                        //this.handleShow();
+                        <Tablero partida={result.data.data}/>
+                        //window.location.href="http://localhost:3000/tablero"
+                        console.log(result.data.data[0].MatrizJuego)
+                        localStorage.setItem("partida",result.data.data[0].MatrizJuego);
+                        window.location.href="http://localhost:3000/tablero";
+                    }
+                    else{
+                        alert("Select a game desactive")
+                        }
+                    }
+                )
+                .catch(error=> {
+                console.log(error);
+                });
+    }     
     render(){
         this.recuperaramisSesiones();
         //this.recuperaraSesiones();
@@ -209,7 +238,8 @@ class  Menu extends  Component{
                 filas[x]=<ListGroupItem><b>Creator: </b>{nickname}      <b>N of the board:</b> {sesiones[x].N_Tablero}      <b>Level:</b> {sesiones[x].NivelDificultad}
                 <b>Games:</b> {sesiones[x].NumPartidas}   
                 <Button  data-param={JSON.stringify({idsesion:sesiones[x].ID_SJ,correo:mail,color:document.getElementById("inputColorf2").value})}bsStyle="primary" bsSize="small" onClick={this.unirseSesion}>
-                Join</Button>     <Button data-param={JSON.stringify({idsesion:sesiones[x].ID_SJ})} bsStyle="primary" bsSize="small" onClick={this.verdetalles}>Details</Button></ListGroupItem>
+                Join</Button>     <Button data-param={JSON.stringify({idsesion:sesiones[x].ID_SJ})} bsStyle="primary" bsSize="small" onClick={this.verdetalles}>Details</Button>
+                <Button data-param={JSON.stringify({idsesion:sesiones[x].ID_SJ})} bsStyle="primary" bsSize="small" onClick={this.continueSession}>Continue</Button></ListGroupItem>
         }
         var partidas=this.state.partidas;
         const filasPartidas=[];

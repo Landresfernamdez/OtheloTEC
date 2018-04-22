@@ -63,6 +63,7 @@ app.get('/selectSesionesJuegoDisponibles', componenteCtrl.selectSesionesJuegoDis
 app.post('/putUsuarioasesiondeJuego',componenteCtrl.insertarUsuarioSesion);
 app.post('/misSesiones',componenteCtrl.misSesiones);
 app.post('/detallesSesion',componenteCtrl.detalles);
+app.post('/partidaActual',componenteCtrl.partidaActual);
 /*
 ======================================================================================
 >  Pone el servidor en escucha de peticiones, lo levanta en el puerto especificado.  <

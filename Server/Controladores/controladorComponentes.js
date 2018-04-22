@@ -69,6 +69,12 @@ exports.detalles = function(rRequest, rResponse){
         rResponse.send(data);
     });
 };
+exports.partidaActual = function(rRequest, rResponse){
+    controlador.partidaActual(rRequest.body, function(data){
+        console.log(data);
+        rResponse.send(data);
+    });
+};
 exports.selectComponente = function(rRequest, rResponse){
     logicaComponente.seleccionarComponente(function(data){
         rResponse.send(data.data);
