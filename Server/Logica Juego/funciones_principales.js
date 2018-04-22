@@ -2,12 +2,14 @@ var Request = require('tedious').Request;
 var TYPES = require('tedious').TYPES;
 var sqlConection = require('../ConexionDBs/sqlConection');
 
-var matriz = [[0,0,0,0,0,0],
-            [0,0,0,0,0,0],
-            [0,0,1,2,0,0],
-            [0,0,2,1,0,0],
-            [0,0,0,0,0,0],
-            [0,0,0,0,0,0]], listaFichas = [], jugadas=[];
+var matriz = [[0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,1,2,0,0,0],
+            [0,0,0,2,1,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0]], listaFichas = [], jugadas=[];
   /*
   
   */            
@@ -724,11 +726,10 @@ exports.validarMovimiento = function(datos,callback){
 
         var x = datos.x, y = datos.y, jug = datos.jug, validas = 0, nivel = datos.nivel;
 
-        var ID_Partida = 16, ID_SJ = 1, EstadoPartida = 1, EstadoSesion = 1, turno = jug, ganador = 0;
+        var ID_Partida = 18, ID_SJ = 1, EstadoPartida = 1, EstadoSesion = 1, turno = jug, ganador = 0;
 
         if(datos.tipo == 1){
-            if (matriz[x][y] == 0) // si hay un espacio en blanco puede colochar ficha
-            {
+            if (matriz[x][y] == 0){ // si hay un espacio en blanco puede colochar ficha
                 //validar todas las direcciones
                 if (validarArriba(x, y, jug)) {
                     validas++;
@@ -763,17 +764,24 @@ exports.validarMovimiento = function(datos,callback){
                     cambiarColor(x,y,jug);
                 }
                 if (validas == 0) {
-                    nivel = 1;
                     callback({
                         success: false,
                         title: "Error",
                         message: "Movimiento invalido",
-                        data: {matriz: matriz, turno: jug, nivel: nivel},
+                        data: {
+                            matriz: matriz, 
+                            turno: jug, 
+                            nivel: nivel,
+                            EstadoPartida: 1, 
+                            EstadoSesion: 1,
+                            PuntosP1: devuelveFichasPC(1).length,
+                            PuntosP2: devuelveFichasPC(2).length,
+                            ganador: 0
+                        },
                         type: "error"
                     })
                 }
                 else {
-                    nivel = 1;
                     turno = 0;
                     if (jug == 1) {
                         turno = 2;
@@ -781,10 +789,20 @@ exports.validarMovimiento = function(datos,callback){
                     else {
                         turno = 1;
                     }
+                    
                     callback({
                         success: true,
                         title: "Movimiento exitoso",
-                        data: {matriz: matriz, turno: turno, nivel: nivel},
+                        data: {
+                            matriz: matriz, 
+                            turno: turno, 
+                            nivel: nivel,
+                            EstadoPartida: 1, 
+                            EstadoSesion: 1,
+                            PuntosP1: devuelveFichasPC(1).length,
+                            PuntosP2: devuelveFichasPC(2).length,
+                            ganador: 0
+                        },
                         message: "Movimiento realizado",
                         type: "success"
                     })
@@ -842,17 +860,24 @@ exports.validarMovimiento = function(datos,callback){
                                 cambiarColor(x,y,jug);
                             }
                             if (validas == 0){
-                                nivel=3;
                                 callback({
                                     success: false,
                                     title: "Error",
                                     message: "Movimiento invalido",
-                                    data: {matriz: matriz, turno: 1, nivel: nivel, ganador: 0, EstadoPartida: 1},
-                                    type: "error"
+                                    data: {
+                                        matriz: matriz, 
+                                        turno: 1, 
+                                        nivel: nivel,
+                                        EstadoPartida: 1, 
+                                        EstadoSesion: 1,
+                                        PuntosP1: devuelveFichasPC(1).length,
+                                        PuntosP2: devuelveFichasPC(2).length,
+                                        ganador: 0
+                                        },
+                                    type: "error1"
                                 })
                             }
                             else{
-                                mostrarMatriz(matriz);
                                 jugadas=[];
                                 var fichasPC=devuelveFichasPC(2);//Esta lista almacena las fichas de la compu
                                 if(fichasPC.length > 0){
@@ -864,8 +889,17 @@ exports.validarMovimiento = function(datos,callback){
                                                 success: false,
                                                 title: "Error",
                                                 message: "La IA se quedo sin movimientos",
-                                                data: {matriz: matriz, turno: 1, nivel: nivel, ganador: 1, EstadoPartida: 0, EstadoSesionJuego: EstadoSesion},
-                                                type: "error"
+                                                data: {
+                                                    matriz: matriz, 
+                                                    turno: 1, 
+                                                    nivel: nivel,
+                                                    EstadoPartida: 1, 
+                                                    EstadoSesion: 1,
+                                                    PuntosP1: devuelveFichasPC(1).length,
+                                                    PuntosP2: devuelveFichasPC(2).length,
+                                                    ganador: 1
+                                                },
+                                                type: "error2"
                                             })
                                         }
                                         else{
@@ -915,23 +949,30 @@ exports.validarMovimiento = function(datos,callback){
                                                         error: requestPC.error,
                                                         title: "Error",
                                                         message: "Sucedio un error en la modificación de los datos",
-                                                        data: {matriz: matriz, turno: 1, nivel: nivel, ganador: 0, EstadoPartida: 1, EstadoSesionJuego: EstadoSesion},
-                                                        type: "error"
+                                                        data: {
+                                                            matriz: matriz, 
+                                                            turno: 1, 
+                                                            nivel: nivel,
+                                                            EstadoPartida: 1, 
+                                                            EstadoSesion: EstadoSesion,
+                                                            PuntosP1: devuelveFichasPC(1).length,
+                                                            PuntosP2: devuelveFichasPC(2).length,
+                                                            ganador: 0
+                                                        },
+                                                        type: "error3"
                                                     })
                                                     return;
                                                 }
                                             });
                                             
                                             var temp = obtenerString(matriz);
-                                            console.log(datos);
-                                            console.log("string: "+temp);
-                                            requestPC.addParameter('ID', TYPES.Int, ID_Partida);console.log(ID_Partida);
-                                            requestPC.addParameter('Turno', TYPES.Int, turno);console.log('turno '+ turno);
-                                            requestPC.addParameter('ID_SJ', TYPES.Int, ID_SJ);console.log(ID_SJ);    
-                                            requestPC.addParameter('EstadoPartida', TYPES.Int, EstadoPartida);console.log(EstadoPartida);
-                                            requestPC.addParameter('Puntos_P1', TYPES.Int, devuelveFichasPC(1).length);console.log(devuelveFichasPC(1).length);
-                                            requestPC.addParameter('Puntos_P2', TYPES.Int, devuelveFichasPC(2).length);console.log(devuelveFichasPC(2).length);
-                                            requestPC.addParameter('MatrizJuego', TYPES.VarChar, temp);console.log(temp);
+                                            requestPC.addParameter('ID', TYPES.Int, ID_Partida);
+                                            requestPC.addParameter('Turno', TYPES.Int, turno);
+                                            requestPC.addParameter('ID_SJ', TYPES.Int, ID_SJ);  
+                                            requestPC.addParameter('EstadoPartida', TYPES.Int, EstadoPartida);
+                                            requestPC.addParameter('Puntos_P1', TYPES.Int, devuelveFichasPC(1).length);
+                                            requestPC.addParameter('Puntos_P2', TYPES.Int, devuelveFichasPC(2).length);
+                                            requestPC.addParameter('MatrizJuego', TYPES.VarChar, temp);
                                         
                                             requestPC.addOutputParameter('success', TYPES.Bit);
                                         
@@ -978,31 +1019,163 @@ exports.validarMovimiento = function(datos,callback){
                                                             PuntosP2: response.data.PuntosP2,
                                                             ganador: ganador
                                                         },
-                                                        type: "error"
+                                                        type: "error4"
                                                     })
                                                     return;
                                                 }
                                             });
                                         }
                                     }
-                                    else{//Si el jugador 2 tiene fichas pero ninguna posibilidad de jugar gaa el jugador 1                                        
-                                        callback({
-                                            success: true,
-                                            title: "IA sin fichas",
-                                            data: {matriz: matriz, turno: 1,nivel: nivel, ganador: 1, EstadoPartida: 0},
-                                            message: "Movimiento realizado",
-                                            type: "success"
-                                        })
+                                    else{//Si el jugador 2 tiene fichas pero ninguna posibilidad de jugar gana el jugador 1                                        
+                                        var requestPC = new Request('quedoSinFichas', function(err) {
+                                            if (err) {
+                                                callback({
+                                                    success: false,
+                                                    error: requestPC.error,
+                                                    title: "Error",
+                                                    message: "Sucedio un error en la modificación de los datos",
+                                                    data: {
+                                                        matriz: matriz, 
+                                                        turno: turno, 
+                                                        nivel: nivel, 
+                                                        ganador: 0, 
+                                                        EstadoPartida: 1, 
+                                                        EstadoSesionJuego: EstadoSesion,
+                                                        PuntosP1: devuelveFichasPC(1).length,
+                                                        PuntosP2: devuelveFichasPC(2).length
+                                                    },
+                                                    type: "error5"
+                                                })
+                                                return;
+                                            }
+                                        });                                        
+                                        
+                                        requestPC.addParameter('ID', TYPES.Int, ID_Partida);console.log(ID_Partida);
+                                        requestPC.addParameter('ID_SJ', TYPES.Int, ID_SJ);console.log(ID_SJ);
+                                        requestPC.addOutputParameter('success', TYPES.Bit);
+                                    
+                                        sqlConection.callProcedure(requestPC, function(response){
+                                            console.log(response);
+                                            
+                                            if (response.success == 1){
+                                                console.log('SIII')
+
+                                                callback({
+                                                    success: true,
+                                                    error: response.error,
+                                                    title: "Good",
+                                                    message: 'Movimiento exitoso',
+                                                    data: {
+                                                        matriz: matriz, 
+                                                        turno: turno, 
+                                                        nivel: nivel,
+                                                        EstadoPartida: response.data.EstadoPartida, 
+                                                        EstadoSesion: response.data.EstadoSesion,
+                                                        PuntosP1: devuelveFichasPC(1).length,
+                                                        PuntosP2: devuelveFichasPC(2).length,
+                                                        ganador: 1
+                                                    },
+                                                    type: "success"
+                                                })
+                                            }
+                                            else{
+                                                console.log('NOOOO')
+                                                matriz = matriz_respaldo;
+                                                callback({
+                                                    success: false,
+                                                    error: response.error,
+                                                    title: "Error",
+                                                    message: 'Movimiento invalido',
+                                                    data: {
+                                                        matriz: matriz, 
+                                                        turno: jug, 
+                                                        nivel: nivel,
+                                                        EstadoPartida: response.data.EstadoPartida, 
+                                                        EstadoSesion: response.data.EstadoSesion,
+                                                        PuntosP1: devuelveFichasPC(1).length,
+                                                        PuntosP2: devuelveFichasPC(2).length,
+                                                        ganador: 0
+                                                    },
+                                                    type: "error6"
+                                                })
+                                            }
+                                        });
                                     }
                                 }
                                 else{//Si la IA se quedo sin fichas gana el jugador 1
-                                    callback({
-                                        success: true,
-                                        title: "IA sin fichas",
-                                        data: {matriz: matriz, turno: 1,nivel: nivel, ganador: 1, EstadoPartida: 0},
-                                        message: "Movimiento realizado",
-                                        type: "success"
-                                    })
+                                    var requestPC = new Request('quedoSinFichas', function(err) {
+                                        if (err) {
+                                            callback({
+                                                success: false,
+                                                error: requestPC.error,
+                                                title: "Error",
+                                                message: "Sucedio un error en la modificación de los datos",
+                                                data: {
+                                                    matriz: matriz, 
+                                                    turno: turno, 
+                                                    nivel: nivel, 
+                                                    ganador: 0, 
+                                                    EstadoPartida: 1, 
+                                                    EstadoSesionJuego: 1,
+                                                    PuntosP1: devuelveFichasPC(1).length,
+                                                    PuntosP2: devuelveFichasPC(2).length
+                                                },
+                                                type: "error7"
+                                            })
+                                            return;
+                                        }
+                                    });                                        
+                                    
+                                    requestPC.addParameter('ID', TYPES.Int, ID_Partida);console.log(ID_Partida);
+                                    requestPC.addParameter('ID_SJ', TYPES.Int, ID_SJ);console.log(ID_SJ);
+                                    requestPC.addOutputParameter('success', TYPES.Bit);
+                                
+                                    sqlConection.callProcedure(requestPC, function(response){
+                                        console.log(response);
+                                        
+                                        if (response.success == 1){
+                                            console.log('SIII')
+
+                                            callback({
+                                                success: true,
+                                                error: response.error,
+                                                title: "IA sin fichas",
+                                                message: 'La IA no tiene fichas',
+                                                data: {
+                                                    matriz: matriz, 
+                                                    turno: turno, 
+                                                    nivel: nivel,
+                                                    EstadoPartida: response.data.EstadoPartida, 
+                                                    EstadoSesion: response.data.EstadoSesion,
+                                                    PuntosP1: response.data.PuntosP1,
+                                                    PuntosP2: response.data.PuntosP2,
+                                                    ganador: 1
+                                                },
+                                                type: "success"
+                                            })
+                                        }
+                                        else{
+                                            console.log('NOOOO')
+                                            matriz = matriz_respaldo;
+                                            callback({
+                                                success: false,
+                                                error: response.error,
+                                                title: "Error",
+                                                message: 'Movimiento invalido',
+                                                data: {
+                                                    matriz: matriz, 
+                                                    turno: jug, 
+                                                    nivel: nivel,
+                                                    EstadoPartida: response.data.EstadoPartida, 
+                                                    EstadoSesion: response.data.EstadoSesion,
+                                                    PuntosP1: response.data.PuntosP1,
+                                                    PuntosP2: response.data.PuntosP2,
+                                                    ganador: 0
+                                                },
+                                                type: "error8"
+                                            })
+                                        }
+                                    });
                                 }
                             }
                         }
@@ -1010,23 +1183,155 @@ exports.validarMovimiento = function(datos,callback){
                             return false; // no puede jugar ahi
                     }
                     else{//Si el jugador 1 tiene fichas pero ninguna de las fichas tiene opcion de jugar                        
-                        callback({
-                            success: true,
-                            title: "Jugador 1 sin fichas",
-                            data: {matriz: matriz, turno: 1, nivel: nivel, ganador: 2, EstadoPartida: 0}, // 0 fin de partida   
-                            message: "Movimiento realizado",
-                            type: "success"
-                        })
+                        var requestPC = new Request('quedoSinFichas', function(err) {
+                            if (err) {
+                                callback({
+                                    success: false,
+                                    error: requestPC.error,
+                                    title: "Error",
+                                    message: "Sucedio un error en la modificación de los datos",
+                                    data: {
+                                        matriz: matriz, 
+                                        turno: turno, 
+                                        nivel: nivel, 
+                                        ganador: 0, 
+                                        EstadoPartida: 1, 
+                                        EstadoSesionJuego: EstadoSesion,
+                                        PuntosP1: devuelveFichasPC(1).length,
+                                        PuntosP2: devuelveFichasPC(2).length
+                                    },
+                                    type: "error9"
+                                })
+                                return;
+                            }
+                        });                                        
+                        
+                        requestPC.addParameter('ID', TYPES.Int, ID_Partida);console.log(ID_Partida);
+                        requestPC.addParameter('ID_SJ', TYPES.Int, ID_SJ);console.log(ID_SJ);
+                        requestPC.addOutputParameter('success', TYPES.Bit);
+                    
+                        sqlConection.callProcedure(requestPC, function(response){
+                            console.log(response);
+                            
+                            if (response.success == 1){
+                                console.log('SIII')
+
+                                callback({
+                                    success: true,
+                                    error: response.error,
+                                    title: "Jugador 1 sin fichas",
+                                    message: 'Movimiento exitoso',
+                                    data: {
+                                        matriz: matriz, 
+                                        turno: turno, 
+                                        nivel: nivel,
+                                        EstadoPartida: response.data.EstadoPartida, 
+                                        EstadoSesion: response.data.EstadoSesion,
+                                        PuntosP1: devuelveFichasPC(1).length,
+                                        PuntosP2: devuelveFichasPC(2).length,
+                                        ganador: 2
+                                    },
+                                    type: "success"
+                                })
+                            }
+                            else{
+                                console.log('NOOOO')
+                                matriz = matriz_respaldo;
+                                callback({
+                                    success: false,
+                                    error: response.error,
+                                    title: "Error",
+                                    message: 'Movimiento invalido',
+                                    data: {
+                                        matriz: matriz, 
+                                        turno: jug, 
+                                        nivel: nivel,
+                                        EstadoPartida: response.data.EstadoPartida, 
+                                        EstadoSesion: response.data.EstadoSesion,
+                                        PuntosP1: devuelveFichasPC(1).length,
+                                        PuntosP2: devuelveFichasPC(2).length,
+                                        ganador: 0
+                                    },
+                                    type: "error10"
+                                })
+                            }
+                        });
                     }
                 }
                 else{//Si el jugador 1 se quedo sin fichas entonces gana el jugador 2                    
-                    callback({
-                        success: true,
-                        title: "Jugador 1 sin fichas",
-                        data: {matriz: matriz, turno: 1,nivel: nivel, ganador: 2, EstadoPartida: 0},
-                        message: "Movimiento realizado",
-                        type: "success"
-                    })
+                    var requestPC = new Request('quedoSinFichas', function(err) {
+                        if (err) {
+                            callback({
+                                success: false,
+                                error: requestPC.error,
+                                title: "Error",
+                                message: "Sucedio un error en la modificación de los datos",
+                                data: {
+                                    matriz: matriz, 
+                                    turno: turno, 
+                                    nivel: nivel, 
+                                    ganador: 0, 
+                                    EstadoPartida: 1, 
+                                    EstadoSesionJuego: 1,
+                                    PuntosP1: devuelveFichasPC(1).length,
+                                    PuntosP2: devuelveFichasPC(2).length
+                                },
+                                type: "error11"
+                            })
+                            return;
+                        }
+                    });                                        
+                    
+                    requestPC.addParameter('ID', TYPES.Int, ID_Partida);console.log(ID_Partida);
+                    requestPC.addParameter('ID_SJ', TYPES.Int, ID_SJ);console.log(ID_SJ);
+                    requestPC.addOutputParameter('success', TYPES.Bit);
+                
+                    sqlConection.callProcedure(requestPC, function(response){
+                        console.log(response);
+                        
+                        if (response.success == 1){
+                            console.log('SIII')
+
+                            callback({
+                                success: true,
+                                error: response.error,
+                                title: "Jugador 1 sin fichas",
+                                message: 'Movimiento realizado',
+                                data: {
+                                    matriz: matriz, 
+                                    turno: turno, 
+                                    nivel: nivel,
+                                    EstadoPartida: response.data.EstadoPartida, 
+                                    EstadoSesion: response.data.EstadoSesion,
+                                    PuntosP1: response.data.PuntosP1,
+                                    PuntosP2: response.data.PuntosP2,
+                                    ganador: 2
+                                },
+                                type: "success"
+                            })
+                        }
+                        else{
+                            console.log('NOOOO')
+                            matriz = matriz_respaldo;
+                            callback({
+                                success: false,
+                                error: response.error,
+                                title: "Error",
+                                message: 'Movimiento invalido',
+                                data: {
+                                    matriz: matriz, 
+                                    turno: turno, 
+                                    nivel: nivel,
+                                    EstadoPartida: response.data.EstadoPartida, 
+                                    EstadoSesion: response.data.EstadoSesion,
+                                    PuntosP1: response.data.PuntosP1,
+                                    PuntosP2: response.data.PuntosP2,
+                                    ganador: 0
+                                },
+                                type: "error12"
+                            })
+                        }
+                    });
                 }
             }
         }
@@ -1034,7 +1339,7 @@ exports.validarMovimiento = function(datos,callback){
 
         }
         else{
-            
+
         }
     } catch (error) {
         console.log(error.TypeError);
