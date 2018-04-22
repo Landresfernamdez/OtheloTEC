@@ -102,3 +102,27 @@ exports.insertPartida = function insertPartida(datos, callback) {
 
     sqlConection.callProcedure(request, callback);
 }
+
+exports.enviarMensaje = function enviarMensaje(datos, callback) {
+    var request = new Request('insertMensaje', function(err) {
+        if (err) {
+            msg = (request.error == 1) ? "Error de conexión" : "No se puede insertar el mensaje";
+            callback({
+                success: false,
+                data: err,
+                error: request.error,
+                title: "Error",
+                message: msg,
+                type: "error"
+            })
+        }
+    });
+    //console.log(datos.MatrizJuego);
+    request.addParameter('ID_Partida', TYPES.Int, datos.ID_Partida);
+    request.addParameter('Nickname', TYPES.VarChar, datos.Nickname);
+    request.addParameter('Mensaje', TYPES.VarChar, datos.Mensaje);
+    
+    request.addOutputParameter('success', TYPES.Bit);
+
+    sqlConection.callProcedure(request, callback);
+}

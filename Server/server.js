@@ -55,6 +55,7 @@ app.post('/movimiento', gameCtrl.realizarMovimiento);
 app.get('/selectSesionesJuegoDisponibles', gameCtrl.selectSesionesJuegoDisponibles);
 app.post('/insertSesionJuego', gameCtrl.registrarSesionJuego);
 app.post('/insertPartida', gameCtrl.insertPartida);
+app.post('/enviarMensaje', gameCtrl.enviarMensaje)
 
 /*
 ======================================================================================

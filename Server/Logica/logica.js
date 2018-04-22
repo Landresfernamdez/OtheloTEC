@@ -122,3 +122,26 @@ exports.insertPartida = function(datos, callback) {
         }
     });
 };
+
+exports.enviarMensaje = function(datos, callback) {
+    consultsPreparer.enviarMensaje(datos, function(response) {
+        msg = (response.error === 1) ? "Error de conexión" : "No se pudo enviar el mensaje";
+        if (response.success) {
+            callback({
+                success: true,
+                error: response.error,
+                title: "Mensaje enviado",
+                message: "Mensaje enviado con exito",
+                type: "success"
+            })
+        } else {
+            callback({
+                success: false,
+                message: msg,
+                title: "Error",
+                error: response.error,
+                type: "error"
+            })
+        }
+    });
+};

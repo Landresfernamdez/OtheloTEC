@@ -146,7 +146,7 @@ exports.callProcedure = function callProcedure(request, callback) {
              */
             request.on('returnValue', function(parameterName, value, metadata) {
                 connection.close();
-                //console.log(res);
+                console.log(res);
                 if (parameterName === 'success' && (value === 1 || value === true)) {
                     callback({
                         success: true,

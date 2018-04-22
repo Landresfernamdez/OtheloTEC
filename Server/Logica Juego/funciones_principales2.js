@@ -13,15 +13,16 @@ var matriz = [[0,0,0,0,0,0],
  * Funcion encargada de convertir un string en una matriz cuadrada dependiendo de una cantidad n de elementos.
  * Ejemplo: 'abcdefghi' -> [[a,b,c],[d,e,f],[g,h,i]]
  */
-var obtenerMatriz = function (matrizString,tamanoTablero){
+var obtenerMatriz = function (matrizString){
+	console.log(matrizString.length);
     var matrizFinal = [];
     for (let i = 0; i < matrizString.length; i++) {
         var matAux = [];
-        for (let j = 0; j < tamanoTablero; j++) {   
-            matAux.push(matrizString[i+j]);
+        for (let j = 0; j < Math.sqrt(matrizString.length); j++) {
+            matAux.push(parseInt(matrizString[i+j]));
         }
-        i += 2;
         matrizFinal.push(matAux);
+		i += Math.sqrt(matrizString.length) - 1;
     }
     return matrizFinal;
 }
@@ -961,6 +962,7 @@ exports.validarMovimiento = function(datos,callback){
                                                 requestPC.addOutputParameter('success', TYPES.Bit);
                                             
                                                 sqlConection.callProcedure(requestPC, function(response){
+                                                    console.log('Algo ->>>')
                                                     console.log(response);
                                                     
                                                     if (response.success == 1){
@@ -972,7 +974,16 @@ exports.validarMovimiento = function(datos,callback){
                                                             error: response.error,
                                                             title: "Good",
                                                             message: 'Movimiento exitoso',
-                                                            data: {matriz: matriz, turno: jug, nivel: nivel},
+                                                            data: {
+                                                                matriz: obtenerMatriz(response.data.matriz), 
+                                                                turno: response.data.turno, 
+                                                                nivel: nivel,
+                                                                EstadoPartida: response.data.EstadoPartida, 
+                                                                EstadoSesion: response.data.EstadoSesion,
+                                                                PuntosP1: response.data.PuntosP1,
+                                                                PuntosP2: response.data.PuntosP2,
+                                                                ganador: 0
+                                                            },
                                                             type: "success"
                                                         })
                                                         //return;
