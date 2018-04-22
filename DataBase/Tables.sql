@@ -332,5 +332,46 @@ AS
 	END;
 GO
 
+CREATE PROCEDURE quedoSinFichas -- LISTO
+	@ID					INT,
+	@ID_SJ				INT,
+	@success			BIT		OUTPUT
+AS 
+	BEGIN
+		IF ((SELECT COUNT(*) FROM Partidas AS P WHERE P.ID = @ID) = 1) -- existe la partida
+			BEGIN				
+				BEGIN TRY
+					UPDATE dbo.Partidas 
+					SET EstadoPartida = 0
+					WHERE ID = @ID; -- que no este terminada la partida
+
+					IF((SELECT COUNT(*) AS NumPartidas FROM Partidas AS P INNER JOIN SesionesJuego AS SJ ON SJ.ID = P.ID_SJ AND SJ.ID = @ID_SJ WHERE P.EstadoPartida = 0) = (SELECT SJ.NumPartidas FROM SesionesJuego AS SJ WHERE SJ.ID = @ID_SJ))
+						BEGIN
+							UPDATE SesionesJuego
+								SET Estado = 0							
+							WHERE ID = @ID_SJ
+
+							SET @success = 1
+							SELECT @success, 0 AS EstadoSesion, ID, ID_SJ, PuntosP1, PuntosP2, Turno AS turno, EstadoPartida, MatrizJuego AS matriz FROM Partidas WHERE ID = @ID -- termino la sesion
+						END
+					ELSE
+						BEGIN
+							SET @success = 1
+							SELECT @success, 1 AS EstadoSesion,  ID, ID_SJ, PuntosP1, PuntosP2, Turno AS turno, EstadoPartida, MatrizJuego AS matriz FROM Partidas WHERE ID = @ID -- continua sesion y partida
+						END
+				END TRY
+				BEGIN CATCH
+					SET @success = 0 -- fallo
+					SELECT @success, 1 AS EstadoSesion
+				END CATCH
+			END;
+		ELSE
+			BEGIN
+				SET @success = 0 -- error
+				SELECT @success, 1 AS EstadoSesion
+			END;			
+	END;
+GO
+
 select * from Partidas
 
