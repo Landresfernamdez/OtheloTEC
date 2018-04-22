@@ -12,6 +12,7 @@
 ===============================================================
 */
 var gameCtrl = require('./Controladores/controlador'); // controlador del juego
+
 /*
 ===============================================================================
 >  Configuraciones principales del servidor, con esto escucha las peticiones  <
@@ -52,16 +53,22 @@ app.use(function(req, res, next) {
 ========================================
 */
 app.post('/movimiento', gameCtrl.realizarMovimiento);
-app.get('/selectSesionesJuegoDisponibles', gameCtrl.selectSesionesJuegoDisponibles);
-app.post('/insertSesionJuego', gameCtrl.registrarSesionJuego);
 app.post('/insertPartida', gameCtrl.insertPartida);
-app.post('/enviarMensaje', gameCtrl.enviarMensaje)
-
+app.post('/enviarMensaje', gameCtrl.enviarMensaje);
+app.post('/Login',gameCtrl.login);
+app.post('/validaCorreo',gameCtrl.validaCorreo);
+app.post('/insertarUsuario',gameCtrl.insertarUsuario);
+app.post('/agregarSesion',gameCtrl.insertarSesion);
+app.get('/selectSesionesJuegoDisponibles', gameCtrl.selectSesionesJuegoDisponibles);
+app.post('/putUsuarioasesiondeJuego',gameCtrl.insertarUsuarioSesion);
+app.post('/misSesiones',gameCtrl.misSesiones);
+app.post('/detallesSesion',gameCtrl.detalles);
+app.post('/partidaActual',gameCtrl.partidaActual);
 /*
 ======================================================================================
 >  Pone el servidor en escucha de peticiones, lo levanta en el puerto especificado.  <
 ======================================================================================
 */
-server.listen(port, function() {
+server.listen(port, function(){
     console.log('Servidor escuchando en el puerto: ' + port);
 });

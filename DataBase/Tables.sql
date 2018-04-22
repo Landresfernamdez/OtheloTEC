@@ -18,6 +18,7 @@ CREATE TABLE SesionesJuego
 	N_Tablero			INT				NOT NULL, -- tamanio del tablero
 	NivelDificultad		INT,					  -- facil, medio, dificil un # para cada uno
 	TipoPartida			INT				NOT NULL, -- tipo de partidas (1 vsUsuario, 2 vsPC, 3 PCvsPC)
+
 	
 	CONSTRAINT PK_SesionesJuego_ID PRIMARY KEY CLUSTERED (ID)
 );
@@ -176,42 +177,46 @@ GO
 USE OthelloTEC
 GO
 CREATE PROCEDURE insertUsuario_SesionJuego -- LISTO
-	@ID_Usuario			INT,
+	@Correo VARCHAR(50),
 	@ID_SesionJuego		INT,
 	@ColorFicha			VARCHAR(10),
 	@success			BIT		OUTPUT
 AS 
 	BEGIN
-		IF ((SELECT COUNT(*) FROM dbo.Usuarios_SesionJuego AS US WHERE US.ID_Usuario = @ID_Usuario AND US.ID_SJ = @ID_SesionJuego) = 1) -- ya existe el registro
+		DECLARE @ID_Usuario INT;
+		SET @ID_Usuario=(SELECT ID FROM Usuarios WHERE Correo=@Correo);
+		IF ((SELECT COUNT(*) FROM dbo.Usuarios_SesionJuego AS US WHERE US.ID_Usuario != @ID_Usuario AND US.ID_SJ = @ID_SesionJuego and US.ColorFicha!=@ColorFicha) = 1) -- Existe solo el creador de la sesion
+			BEGIN
+				INSERT INTO dbo.Usuarios_SesionJuego (ID_Usuario,ID_SJ,ColorFicha) VALUES (@ID_Usuario,@ID_SesionJuego,@ColorFicha);
+				UPDATE SesionesJuego SET Estado=1 where ID=@ID_SesionJuego;
+				SET @success = 1 -- exito
+				SELECT @success
+			END;	
+		ELSE
 			BEGIN
 				SET @success = 0 -- error
 				SELECT @success
-			END;
-		ELSE
-			BEGIN
-				INSERT INTO dbo.Usuarios_SesionJuego (ID_Usuario,ID_SJ,ColorFicha) VALUES (@ID_Usuario,@ID_SesionJuego,@ColorFicha);
-				SET @success = 1 -- exito
-				SELECT @success
-			END;			
+			END;		
 	END;
 GO
-select * from SesionesJuego where Estado = 0
 ----------------------------------------------
 --				SesionJuego
 ----------------------------------------------
 USE OthelloTEC
 GO
-CREATE PROCEDURE insertSesionJuego -- LISTO
+
+ALTER PROCEDURE insertSesionJuego -- LISTO
 	@NumPartidas		INT,
 	@N_Tablero			INT,
-	@ColorFondo			VARCHAR(10),
 	@NivelDificultad	INT,
 	@TipoPartida		INT,
+	@IdUsuario VARCHAR(200),
+	@colorFicha VARCHAR(200),
 	@success			BIT		OUTPUT
 AS 
 	BEGIN
 		IF ((SELECT COUNT(*) FROM dbo.SesionesJuego AS SJ WHERE SJ.NumPartidas = @NumPartidas AND 
-																SJ.N_Tablero = @N_Tablero AND SJ.ColorFondo = @ColorFondo AND 
+																SJ.N_Tablero = @N_Tablero  AND
 																SJ.NivelDificultad = @NivelDificultad AND SJ.TipoPartida = @TipoPartida) = 1) -- ya existe el registro
 			BEGIN
 				SET @success = 0 -- error
@@ -219,19 +224,168 @@ AS
 			END;
 		ELSE
 			BEGIN
-				INSERT INTO dbo.SesionesJuego(NumPartidas,N_Tablero,ColorFondo,NivelDificultad,TipoPartida) VALUES (@NumPartidas,@N_Tablero,@ColorFondo,@NivelDificultad,@TipoPartida);
+				INSERT INTO dbo.SesionesJuego(NumPartidas,N_Tablero,NivelDificultad,TipoPartida,Estado) VALUES (@NumPartidas,@N_Tablero,@NivelDificultad,@TipoPartida,1);
+				DECLARE @IDS INT;
+				SET @IDS =(SELECT SCOPE_IDENTITY());
+				DECLARE @IDU INT;
+				SET @IDU=(SELECT ID from Usuarios where Correo=@IdUsuario);
+				INSERT INTO dbo.Usuarios_SesionJuego (ID_SJ,ID_Usuario,ColorFicha) VALUES (@IDS,@IDU,@colorFicha);
+				---This code fragment generate the first matriz in the game
+				DECLARE @N INT=@N_Tablero;	
+				DECLARE @NC1 INT=@N;
+				DECLARE @TXTPLANO NVARCHAR(MAX)='';
+				DECLARE @PS1 INT=@N/2;
+				DECLARE @PS2 INT=@PS1+1;
+				WHILE(@NC1>0)
+					BEGIN
+						SELECT @NC1
+						DECLARE @NC2 INT=@N;
+						WHILE(@NC2>0)
+							BEGIN
+								IF(@NC1=@PS1 and @NC2=@PS1)
+									BEGIN
+										SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'1'));
+										SET @NC2=@NC2-1;
+									END
+								ELSE IF(@NC1=@PS2 and @NC2=@PS2)
+									BEGIN
+										SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'1'));
+										SET @NC2=@NC2-1;
+									END
+								ELSE IF(@NC1=@PS1 and @NC2=@PS2)
+									BEGIN
+										SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'2'));
+										SET @NC2=@NC2-1;
+									END
+								ELSE IF(@NC1=@PS2 and @NC2=@PS1)
+									BEGIN
+										SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'2'));
+										SET @NC2=@NC2-1;
+									END
+								ELSE
+									BEGIN
+										SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'0'));
+										SET @NC2=@NC2-1;
+									END	
+							END
+							SET @NC1=@NC1-1;
+					END
+					----------
+				INSERT INTO Partidas(ID_SJ,Turno,MatrizJuego,EstadoPartida)VALUES(@IDS,1,@TXTPLANO,1);
+
 				SET @success = 1 -- exito
 				SELECT @success
 			END;			
 	END;
 GO
 
+ALTER PROCEDURE misSesiones
+		@correo VARCHAR(200),
+		@filtro CHAR(1),
+		@success BIT OUTPUT
+AS 
+BEGIN
+			IF((SELECT COUNT(*) FROM SesionesJuego as sj inner join (SELECT * FROM Usuarios as u inner join Usuarios_SesionJuego as us on u.ID=us.ID_Usuario and u.Correo=@correo )as j on j.ID_SJ=sj.ID and (sj.Estado=1 or sj.Estado=0))=0 and (SELECT COUNT(*) FROM Usuarios as us inner join 
+					(SELECT * FROM SesionesJuego  as sj inner join Usuarios_SesionJuego as u on  sj.Estado = 0 and u.ID_SJ=sj.ID) as temp
+							on us.ID=temp.ID AND us.Correo!=@correo)=0)
+						BEGIN 
+							SET @success = 0 -- error
+							SELECT @success
+						END;
+			ELSE
+				BEGIN
+					IF(@filtro='1')
+						BEGIN 
+							SET @success = 1 -- exito
+							SELECT * FROM(SELECT sj.Estado,sj.NumPartidas,sj.N_Tablero,sj.NivelDificultad,sj.TipoPartida,j.ID_SJ FROM SesionesJuego as sj inner join (SELECT * FROM Usuarios as u inner join Usuarios_SesionJuego as us on u.ID=us.ID_Usuario and u.Correo=@correo )as j
+							on j.ID_SJ=sj.ID and sj.Estado=1 ) as temp
+							inner join (SELECT @success as succces) AS temp1 on temp.Estado=1
+						END
+					ELSE IF(@filtro='2')
+						BEGIN
+							 SET @success = 1 -- exito
+							SELECT * FROM(SELECT sj.Estado,sj.NumPartidas,sj.N_Tablero,sj.NivelDificultad,sj.TipoPartida,j.ID_SJ FROM SesionesJuego as sj inner join (SELECT * FROM Usuarios as u inner join Usuarios_SesionJuego as us on u.ID=us.ID_Usuario and u.Correo=@correo)as j
+							on j.ID_SJ=sj.ID and sj.Estado=0 ) as temp
+							inner join (SELECT @success as succces) AS temp1 on temp.Estado=0
+						END
+					ELSE
+						BEGIN
+						SET @success = 1 -- exito
+						SELECT * FROM(SELECT us.ID,us.Correo,us.Nickname,temp.ID_SJ,temp.N_Tablero,temp.NivelDificultad,temp.TipoPartida,temp.NumPartidas FROM Usuarios as us inner join 
+						(SELECT * FROM SesionesJuego  as sj inner join Usuarios_SesionJuego as u on  sj.Estado = 0 and u.ID_SJ=sj.ID) as temp
+						 on us.ID=temp.ID_Usuario) AS todo inner join (SELECT @success as succces) as ex on todo.Correo!=@correo
+						END
+				END;
+END
+
+ALTER PROCEDURE devuelvePartidas
+				@ID_S INT ,
+				@success BIT OUTPUT
+AS 
+	BEGIN 
+		IF((SELECT COUNT(*) FROM Partidas as p inner join SesionesJuego s on p.ID_SJ=s.ID and p.ID_SJ=@ID_S and s.Estado=0)=0)
+			BEGIN
+				SET @success =0;
+				SELECT @success; 
+			END 
+		ELSE
+			BEGIN
+				SET @success=1;
+				SELECT  data.MatrizJuego,data.PuntosP1,data.PuntosP2,estado.success FROM (SELECT p.MatrizJuego,p.PuntosP1,p.PuntosP2 FROM Partidas as p inner join SesionesJuego s on p.ID_SJ=s.ID and p.ID_SJ=@ID_S and s.Estado=0) AS data
+				inner join (SELECT @success as success) AS estado ON estado.success=1 
+			END
+	END 
+
+
+DECLARE @N INT=6;
+DECLARE @NC1 INT=@N;
+DECLARE @TXTPLANO NVARCHAR(MAX)='';
+DECLARE @PS1 INT=@N/2;
+DECLARE @PS2 INT=@PS1+1;
+WHILE(@NC1>0)
+	BEGIN
+		SELECT @NC1
+		DECLARE @NC2 INT=@N;
+		WHILE(@NC2>0)
+			BEGIN
+				IF(@NC1=@PS1 and @NC2=@PS1)
+					BEGIN
+						SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'1'));
+						SET @NC2=@NC2-1;
+					END
+				ELSE IF(@NC1=@PS2 and @NC2=@PS2)
+					BEGIN
+						SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'1'));
+						SET @NC2=@NC2-1;
+					END
+				ELSE IF(@NC1=@PS1 and @NC2=@PS2)
+					BEGIN
+						SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'2'));
+						SET @NC2=@NC2-1;
+					END
+				ELSE IF(@NC1=@PS2 and @NC2=@PS1)
+					BEGIN
+						SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'2'));
+						SET @NC2=@NC2-1;
+					END
+				ELSE
+					BEGIN
+						SET @TXTPLANO=(SELECT CONCAT(@TXTPLANO,'0'));
+						SET @NC2=@NC2-1;
+					END	
+			END
+			SET @NC1=@NC1-1;
+	END
+	
+
+
 ----------------------------------------------
 --				Partidas
 ----------------------------------------------
 USE OthelloTEC
 GO
-CREATE PROCEDURE insertPartida -- creacion de partida una vez iniciado el juego
+
+CREATE PROCEDURE insertPartidas -- LISTO
 	@ID_SJ				INT,
 	@MatrizJuego		VARCHAR(8000),
 	@success			BIT		OUTPUT
@@ -274,6 +428,15 @@ AS
 				SET @success = 0 -- error
 				SELECT @success
 			END;			
+	END;
+GO
+
+CREATE PROCEDURE selectPartidasDisponibles -- LISTO
+	@success			BIT		OUTPUT
+AS 
+	BEGIN
+		SET @success = 0 -- error
+		SELECT @success, * FROM Partidas WHERE EstadoPartida = 1 -- pausa		
 	END;
 GO
 
@@ -328,50 +491,13 @@ AS
 			BEGIN
 				SET @success = 0 -- error
 				SELECT @success, 1 AS EstadoSesion
+
 			END;			
 	END;
 GO
 
-CREATE PROCEDURE quedoSinFichas -- LISTO
-	@ID					INT,
-	@ID_SJ				INT,
-	@success			BIT		OUTPUT
-AS 
-	BEGIN
-		IF ((SELECT COUNT(*) FROM Partidas AS P WHERE P.ID = @ID) = 1) -- existe la partida
-			BEGIN				
-				BEGIN TRY
-					UPDATE dbo.Partidas 
-					SET EstadoPartida = 0
-					WHERE ID = @ID; -- que no este terminada la partida
+SELECT us.ID,us.Correo,us.Nickname,temp.ID_SJ,temp.N_Tablero,temp.NivelDificultad,temp.TipoPartida,temp.NumPartidas FROM Usuarios as us inner join 
+(SELECT * FROM SesionesJuego  as sj inner join Usuarios_SesionJuego as u on  sj.Estado = 0 and u.ID_SJ=sj.ID) as temp
+on us.ID=temp.ID
 
-					IF((SELECT COUNT(*) AS NumPartidas FROM Partidas AS P INNER JOIN SesionesJuego AS SJ ON SJ.ID = P.ID_SJ AND SJ.ID = @ID_SJ WHERE P.EstadoPartida = 0) = (SELECT SJ.NumPartidas FROM SesionesJuego AS SJ WHERE SJ.ID = @ID_SJ))
-						BEGIN
-							UPDATE SesionesJuego
-								SET Estado = 0							
-							WHERE ID = @ID_SJ
-
-							SET @success = 1
-							SELECT @success, 0 AS EstadoSesion, ID, ID_SJ, PuntosP1, PuntosP2, Turno AS turno, EstadoPartida, MatrizJuego AS matriz FROM Partidas WHERE ID = @ID -- termino la sesion
-						END
-					ELSE
-						BEGIN
-							SET @success = 1
-							SELECT @success, 1 AS EstadoSesion,  ID, ID_SJ, PuntosP1, PuntosP2, Turno AS turno, EstadoPartida, MatrizJuego AS matriz FROM Partidas WHERE ID = @ID -- continua sesion y partida
-						END
-				END TRY
-				BEGIN CATCH
-					SET @success = 0 -- fallo
-					SELECT @success, 1 AS EstadoSesion
-				END CATCH
-			END;
-		ELSE
-			BEGIN
-				SET @success = 0 -- error
-				SELECT @success, 1 AS EstadoSesion
-			END;			
-	END;
-GO
-
-select * from Partidas
 
