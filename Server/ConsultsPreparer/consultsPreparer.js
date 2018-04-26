@@ -1,6 +1,7 @@
 var Request = require('tedious').Request;
 var TYPES = require('tedious').TYPES;
 var sqlConection = require('../ConexionDBs/sqlConection.js');
+var funciones = require('../Logica Juego/funciones_principales');
 
 /*
 ===========================
@@ -202,12 +203,11 @@ exports.misSesiones = function misSesiones(datos, callback) {
                 success: false,
                 error: request.error,
                 title: "Error",
-                message: "Sucedio un error en la inserción de los datos",
+                message: "Error a la hora de recuperar los datos",
                 type: "error"
             })
         }
     });
-    console.log(datos);
     request.addParameter('correo', TYPES.VarChar, datos.correo);
     request.addParameter('filtro', TYPES.Char, datos.filtro);
     request.addOutputParameter('success', TYPES.Bit);
@@ -258,6 +258,8 @@ exports.partidaActual = function partidaActual(datos, callback) {
     sqlConection.callProcedure(request, function(res) {
         console.log("prueba");
         console.log(res);
+        
+        funciones.setMatrizJuego(res.data[0].MatrizJuego);
         callback(res);
     });
 }

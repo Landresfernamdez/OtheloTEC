@@ -176,7 +176,7 @@ GO
 ----------------------------------------------
 USE OthelloTEC
 GO
-CREATE PROCEDURE insertUsuario_SesionJuego -- LISTO
+ALTER PROCEDURE insertUsuario_SesionJuego -- LISTO
 	@Correo VARCHAR(50),
 	@ID_SesionJuego		INT,
 	@ColorFicha			VARCHAR(10),
@@ -185,7 +185,7 @@ AS
 	BEGIN
 		DECLARE @ID_Usuario INT;
 		SET @ID_Usuario=(SELECT ID FROM Usuarios WHERE Correo=@Correo);
-		IF ((SELECT COUNT(*) FROM dbo.Usuarios_SesionJuego AS US WHERE US.ID_Usuario != @ID_Usuario AND US.ID_SJ = @ID_SesionJuego and US.ColorFicha!=@ColorFicha) = 1) -- Existe solo el creador de la sesion
+		IF ((SELECT COUNT(*) FROM dbo.Usuarios_SesionJuego AS US WHERE US.ID_Usuario !=@ID_Usuario  AND US.ID_SJ = @ID_SesionJuego and US.ColorFicha!=@ColorFicha) = 1) -- Existe solo el creador de la sesion
 			BEGIN
 				INSERT INTO dbo.Usuarios_SesionJuego (ID_Usuario,ID_SJ,ColorFicha) VALUES (@ID_Usuario,@ID_SesionJuego,@ColorFicha);
 				UPDATE SesionesJuego SET Estado=1 where ID=@ID_SesionJuego;
@@ -199,6 +199,14 @@ AS
 			END;		
 	END;
 GO
+
+EXEC insertUsuario_SesionJuego 'landresf3638@gmail.com',4004,'#0232fr',0
+
+SELECT * FROM SesionesJuego
+SELECT * FROM Usuarios_SesionJuego
+select * from Usuarios
+
+
 ----------------------------------------------
 --				SesionJuego
 ----------------------------------------------
@@ -224,7 +232,7 @@ AS
 			END;
 		ELSE
 			BEGIN
-				INSERT INTO dbo.SesionesJuego(NumPartidas,N_Tablero,NivelDificultad,TipoPartida,Estado) VALUES (@NumPartidas,@N_Tablero,@NivelDificultad,@TipoPartida,1);
+				INSERT INTO dbo.SesionesJuego(NumPartidas,N_Tablero,NivelDificultad,TipoPartida,Estado) VALUES (@NumPartidas,@N_Tablero,@NivelDificultad,@TipoPartida,2);
 				DECLARE @IDS INT;
 				SET @IDS =(SELECT SCOPE_IDENTITY());
 				DECLARE @IDU INT;
@@ -278,17 +286,17 @@ AS
 			END;			
 	END;
 GO
-
 ALTER PROCEDURE misSesiones
 		@correo VARCHAR(200),
 		@filtro CHAR(1),
 		@success BIT OUTPUT
 AS 
 BEGIN
-			IF((SELECT COUNT(*) FROM SesionesJuego as sj inner join (SELECT * FROM Usuarios as u inner join Usuarios_SesionJuego as us on u.ID=us.ID_Usuario and u.Correo=@correo )as j on j.ID_SJ=sj.ID and (sj.Estado=1 or sj.Estado=0))=0 and (SELECT COUNT(*) FROM Usuarios as us inner join 
-					(SELECT * FROM SesionesJuego  as sj inner join Usuarios_SesionJuego as u on  sj.Estado = 0 and u.ID_SJ=sj.ID) as temp
-							on us.ID=temp.ID AND us.Correo!=@correo)=0)
+			IF((SELECT COUNT(*) FROM SesionesJuego as sj inner join (SELECT * FROM Usuarios as u inner join Usuarios_SesionJuego as us on u.ID=us.ID_Usuario and u.Correo='landresf3638@gmail.com' )as j on j.ID_SJ=sj.ID and (sj.Estado=1 or sj.Estado=0))=0 and (SELECT COUNT(*) FROM Usuarios as us inner join 
+					(SELECT * FROM SesionesJuego  as sj inner join Usuarios_SesionJuego as u on  sj.Estado = 2 and u.ID_SJ=sj.ID and sj.TipoPartida=2) as temp
+							on us.ID=temp.ID_Usuario AND us.Correo!='carlosmario.villafuerted66@gmail.com')=0)
 						BEGIN 
+							print('entro')
 							SET @success = 0 -- error
 							SELECT @success
 						END;
@@ -311,12 +319,29 @@ BEGIN
 					ELSE
 						BEGIN
 						SET @success = 1 -- exito
-						SELECT * FROM(SELECT us.ID,us.Correo,us.Nickname,temp.ID_SJ,temp.N_Tablero,temp.NivelDificultad,temp.TipoPartida,temp.NumPartidas FROM Usuarios as us inner join 
-						(SELECT * FROM SesionesJuego  as sj inner join Usuarios_SesionJuego as u on  sj.Estado = 0 and u.ID_SJ=sj.ID) as temp
-						 on us.ID=temp.ID_Usuario) AS todo inner join (SELECT @success as succces) as ex on todo.Correo!=@correo
+						SELECT  * FROM(SELECT us.ID,us.Correo,us.Nickname,temp.ID_SJ,temp.N_Tablero,temp.NivelDificultad,temp.TipoPartida,temp.NumPartidas FROM Usuarios as us inner join 
+						(SELECT * FROM SesionesJuego  as sj inner join Usuarios_SesionJuego as u on  sj.Estado = 2 and u.ID_SJ=sj.ID and sj.TipoPartida=2) as temp
+						 on us.ID=temp.ID_Usuario) AS todo inner join (SELECT @success as succces) as ex on todo.Correo!=@correo 
 						END
 				END;
 END
+
+
+---TRUNCATE  TABLE Usuarios_SesionJuego
+---TRUNCATE TABLE Partidas
+---TRUNCATE TABLE SesionesJuego
+
+
+EXEC misSesiones 'carlosmario.villafuerted66@gmail.com','1',0
+EXEC misSesiones 'landresf3638@gmail.com','1',0
+EXEC misSesiones 'rodriguez.elio.97@gmail.com','1',0
+SELECT * FROM SesionesJuego
+
+SELECT * FROM Usuarios_SesionJuego
+
+
+SELECT * FROM Usuarios
+
 
 ALTER PROCEDURE devuelvePartidas
 				@ID_S INT ,
@@ -500,4 +525,24 @@ SELECT us.ID,us.Correo,us.Nickname,temp.ID_SJ,temp.N_Tablero,temp.NivelDificulta
 (SELECT * FROM SesionesJuego  as sj inner join Usuarios_SesionJuego as u on  sj.Estado = 0 and u.ID_SJ=sj.ID) as temp
 on us.ID=temp.ID
 
+ALTER PROCEDURE [dbo].[partidaActual]
+				@ID_S INT ,
+				@success BIT OUTPUT
+AS 
+	BEGIN 
+		IF((SELECT COUNT(*) FROM Partidas as p inner join SesionesJuego s on p.ID_SJ=s.ID and p.ID_SJ=@ID_S and s.Estado=1)=0)
+			BEGIN
+				SET @success =0;
+				SELECT @success; 
+			END 
+		ELSE
 
+			BEGIN
+				SET @success=1;
+				SELECT  data.MatrizJuego,data.PuntosP1,data.PuntosP2,data.ID,data.Turno,data.EstadoPartida,data.Estado,data.NivelDificultad,data.ID_SJ,data.TipoPartida,data.N_Tablero,estado.success FROM (SELECT p.MatrizJuego,p.PuntosP1,p.PuntosP2,p.ID,p.Turno,p.EstadoPartida,s.Estado,s.NivelDificultad,s.ID as ID_SJ,s.TipoPartida,s.N_Tablero FROM Partidas as p inner join SesionesJuego AS s on p.ID_SJ=s.ID and p.ID_SJ=@ID_S and s.Estado=1) AS data
+				inner join (SELECT @success as success) AS estado ON estado.success=1 
+			END
+	END 
+
+
+	SELECT * FROM Partidas

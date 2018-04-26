@@ -6,13 +6,19 @@ class Tablero extends Component{
     constructor(props){
         super(props);
         this.handleClick=this.handleClick.bind(this);
-        console.log(localStorage.getItem("partida"));
+        //console.log(localStorage.getItem("partida"));
         this.state = {
-            numbers: this.obtenerMatriz(localStorage.getItem("partida")),
+            numbers: this.obtenerMatriz(JSON.parse(localStorage.getItem("partida")).matriz),
             turno:1,
-            tipo:2,
-            nivel:3,
-            ganador:0
+            tipo:JSON.parse(localStorage.getItem("partida")).tipo,
+            nivel:JSON.parse(localStorage.getItem("partida")).nivel,
+            ganador:0,
+            ID_Partida:JSON.parse(localStorage.getItem("partida")).ID_Partida,
+            ID_SJ:JSON.parse(localStorage.getItem("partida")).id_sesion,
+            EstadoPartida:1,
+            PuntosP1:0,
+            PuntosP2:0,
+            n:parseInt(JSON.parse(localStorage.getItem("partida")).n)
         }
     }
     obtenerMatriz = function (matrizString){
@@ -28,33 +34,68 @@ class Tablero extends Component{
         }
         return matrizFinal;
     }
+    recuperarPartida=()=>{
+        axios.post('http://172.24.74.178:8080/partidaActual',{
+                id_sesion:this.state.ID_SJ
+                })
+                .then(result => {
+                    //console.log(result);
+                    if(result.data.success==true){
+                        //console.log(result);
+                        this.setState({ID_Partida:result.data.data[0].ID
+                                    ,ID_SJ:result.data.data[0].ID_SJ,numbers:this.obtenerMatriz(result.data.data[0].MatrizJuego),
+                                PuntosP1:result.data.data[0].PuntosP1,PuntosP2:result.data.data[0].PuntosP2,turno:result.data.data[0].Turno})
+                    }
+                    else{
+                        alert("Select a game desactive")
+                        }
+                    }
+                )
+                .catch(error=> {
+                console.log(error);
+                });
+    }
     handleClick(e){
         e.preventDefault();
         const  {param}=e.target.dataset;
         var data=JSON.parse(param);
-        axios.post('http://localhost:8080/movimiento', {
+        //console.log(this.state);
+        console.log(this.state.numbers);
+        axios.post('http://172.24.74.178:8080/movimiento', {
          x: data.X,
          y: data.Y,
          jug: this.state.turno,
          tipo:this.state.tipo,
-         nivel:this.state.nivel
+         nivel:this.state.nivel,
+         ID_Partida:this.state.ID_Partida,
+         ID_SJ:this.ID_SJ,
+         EstadoPartida:this.EstadoPartida
          })
          .then(result => {
-             console.log(result.data.data.matriz);
+             //console.log(result.data.data.matriz);
+             console.log(result);
              this.setState({
                  numbers:result.data.data.matriz,
                  turno:result.data.data.turno,
                  tipo:this.state.tipo,
                  nivel:result.data.data.nivel,
+                 ganador:result.data.data.ganador,
+                 PuntosP1:result.data.data.PuntosP1,
+                 PuntosP2:result.data.data.PuntosP2,
                  ganador:result.data.data.ganador
              });
          })
          .catch(error=> {
-         console.log(error);
+            alert(error)
          });
     }
+    componentDidMount() {
+        this.interval = setInterval(this.recuperarPartida, 250);
+      }
+    componentWillUnmount() {
+        clearInterval(this.interval);
+      }
     render(){
-        
         var w = window.innerWidth
             || document.documentElement.clientWidth
             || document.body.clientWidth;
@@ -63,7 +104,7 @@ class Tablero extends Component{
             || document.documentElement.clientHeight
             || document.body.clientHeight;
 
-        var n=8;
+        var n=parseInt(this.state.n);
         h=h-100;
         w=w-100;
         var dimension=0;
@@ -73,13 +114,14 @@ class Tablero extends Component{
         else{
             dimension=w/n;
         }
-        const numbers =this.state.numbers;
+        var numbers1 =this.state.numbers;
+        //console.log(this.state.numbers)
         const colorPlayer1='red';
         const colorPlayer2='orange';
-        const numbers2=numbers;
-        for(var i=0;i<numbers.length;i++){
-            for(var j=0;j<numbers.length;j++){
-                if(numbers[i][j]===0){
+        var numbers2=numbers1;
+        for(var i=0;i<numbers1.length;i++){
+            for(var j=0;j<numbers1.length;j++){
+                if(numbers1[i][j]===0){
                     const btnStyle0= {
                         background:'rgba(76, 175, 80, 0.3)',
                         BackgroundSize:'6em',
@@ -97,7 +139,7 @@ class Tablero extends Component{
                     </td>;
                     numbers2[i][j]=temporal;
                 }
-                else if(numbers[i][j]===1){
+                else if(numbers1[i][j]===1){
                     const btnStyle1= {
                         background:colorPlayer2,
                         BackgroundSize:'6em',
@@ -135,7 +177,7 @@ class Tablero extends Component{
                 }
             }
         }
-        const listItems = numbers.map((x,i) =>
+        const listItems = numbers1.map((x,i) =>
             <tr>
                 {x.map((y,j)=>
                     numbers2[i][j])}
@@ -145,6 +187,7 @@ class Tablero extends Component{
             overflowX:'auto',
             overflowY:'auto',
             textAlign:'center'
+            
         };
         return(
             <div style={divStyle}>

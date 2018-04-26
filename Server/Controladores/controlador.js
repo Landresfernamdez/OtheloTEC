@@ -7,7 +7,9 @@ var funciones = require('../Logica Juego/funciones_principales');
 var logica = require('../Logica/logica');
 
 exports.realizarMovimiento = function(rRequest, rResponse){
+    console.log('=========    BODY    =========');
     console.log(rRequest.body)
+    console.log('=========    BODY    =========');
     funciones.validarMovimiento(rRequest.body, function(data){
         console.log('=========    DATA    =========');
         console.log(data);

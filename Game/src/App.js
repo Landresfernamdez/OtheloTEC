@@ -7,7 +7,7 @@ import GoogleLogin from './components/GoogleLogin/'
 import Menu from './components/menu'
 //Import css for the application
 import './style/index.css'
-class App extends Component {
+class App extends React.Component {
   render() {
     return (
         <Router history={browserHistory}>

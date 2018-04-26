@@ -113,11 +113,10 @@ class  Menu extends  Component{
             var request={
                 correo:localStorage.getItem("correo"),
                 filtro:filtro
-                }
-            //console.log(request);    
+                }   
             axios.post('http://localhost:8080/misSesiones',request).then(response=>{
                     //localStorage.setItem("sesiones",JSON.stringify(response.data));
-                    //console.log(response);
+                    
                     this.setState({filtro:filtro,sesiones:response.data.data});
                 })
                 .catch(function (error) {
@@ -189,13 +188,12 @@ class  Menu extends  Component{
                 .then(result => {
                     console.log(result);
                     if(result.data.success==true){
-                        //this.setState({partidas:result.data.data})
-                        //this.handleShow();
-                        <Tablero partida={result.data.data}/>
-                        //window.location.href="http://localhost:3000/tablero"
                         console.log(result.data.data[0].MatrizJuego)
-                        localStorage.setItem("partida",result.data.data[0].MatrizJuego);
-                        window.location.href="http://localhost:3000/tablero";
+                        localStorage.setItem("partida",JSON.stringify({matriz:result.data.data[0].MatrizJuego,id_sesion:result.data.data[0].ID_SJ,tipo:
+                        result.data.data[0].TipoPartida,nivel:result.data.data[0].NivelDificultad,
+                        n:result.data.data[0].N_Tablero}));
+                        
+                        window.location.href="http://localhost:3001/tablero";
                     }
                     else{
                         alert("Select a game desactive")
@@ -329,7 +327,7 @@ class  Menu extends  Component{
                                 {filas}
                             </ListGroup>
                         </Tab>
-                    </Tabs>;
+                    </Tabs>
                     <Modal show={this.state.show} onHide={this.handleClose}>
                         <Modal.Header closeButton>
                             <Modal.Title>Modal heading</Modal.Title>

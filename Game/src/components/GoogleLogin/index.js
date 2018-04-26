@@ -104,7 +104,7 @@ class GoogleLogin extends Component{
             .then(result => {
                 console.log(result);
                 if(result.data.success==true){
-                    localStorage.setItem("correo", this.state.correo);
+                    localStorage.setItem("correo", mail);
                     window.location.href=window.location.href+'menu';
                     alert("Bienvenido");
                 }
@@ -113,7 +113,7 @@ class GoogleLogin extends Component{
                 }
             })
             .catch(error=> {
-            console.log(error);
+            //console.log(error);
             });
     }
     cerrarDialog=()=>{

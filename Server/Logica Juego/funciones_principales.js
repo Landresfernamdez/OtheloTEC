@@ -1,16 +1,13 @@
 var Request = require('tedious').Request;
 var TYPES = require('tedious').TYPES;
 var sqlConection = require('../ConexionDBs/sqlConection');
-
-var matriz = [[0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,1,2,0,0,0],
-            [0,0,0,2,1,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0]], listaFichas = [], jugadas=[];
-            
+var matriz = [] ,listaFichas = [], jugadas=[];
+exports.setMatrizJuego = function(matrizJuego){
+    mostrarMatriz(matriz);
+    console.log('\n\n');
+    matriz = obtenerMatriz(matrizJuego);
+    mostrarMatriz(matriz);
+}            
 /**
  * Funcion encargada de convertir un string en una matriz cuadrada dependiendo de una cantidad n de elementos.
  * Ejemplo: 'abcdefghi' -> [[a,b,c],[d,e,f],[g,h,i]]
@@ -918,9 +915,9 @@ function fichasJugadorXtienenJugada(fichasPC,jugador){
 /**
  * Posibles jugadas de la computadora
  */
-function posiblesJugadas(fichasPC){
+function posiblesJugadas(fichasPC, jugador){
     for(var i = 0; i < fichasPC.length; i++){
-        var x = fichasPC[i].x, y = fichasPC[i].y, jug = 2;
+        var x = fichasPC[i].x, y = fichasPC[i].y, jug = jugador;
         //validar todas las direcciones
         //Listo
         validarArribaPC(x,y,jug);
@@ -944,9 +941,9 @@ var finPartida = function(){
     return true; // no encontro espacios entonces ya no hay mas jugadas
 }
 
-function posiblesJugadas2(fichasPC){
+function posiblesJugadas2(fichasPC, jugador){
     for(var i=0;i<fichasPC.length;i++){
-        var x = fichasPC[i].x, y = fichasPC[i].y, jug = 2;
+        var x = fichasPC[i].x, y = fichasPC[i].y, jug = jugador;
         //validar todas las direcciones
         validarArribaPC2(x,y,jug);
         validarAbajoPC2(x,y,jug);
@@ -966,13 +963,13 @@ function posiblesJugadas2(fichasPC){
  */
 exports.validarMovimiento = function(datos,callback){
     try {
+        console.log(datos);
         //var x = datos.x, y = datos.y, jug = datos.jug, validas = 0, ID_Partida = datos.ID_Partida, ID_SJ = datos.ID_SJ;
+       // matriz=datos.matriz;
+        var x = datos.x, y = datos.y, jug = datos.jug, validas = 0, nivel = datos.nivel, matriz_respaldo = matriz;
 
-        var x = datos.x, y = datos.y, jug = datos.jug, validas = 0, nivel = datos.nivel;
-
-        var ID_Partida = 18, ID_SJ = 1, EstadoPartida = 1, EstadoSesion = 1, turno = jug, ganador = 0;
-
-        if(datos.tipo == 1){
+        var ID_Partida = datos.ID_Partida, ID_SJ = datos.ID_SJ, EstadoPartida = datos.EstadoPartida, turno =datos.jug, ganador = 0;
+        if(datos.tipo == 2){
             var lista = devuelveFichasPC(jug);
             if(lista.length > 0){
                 if(fichasJugadorXtienenJugada(lista,jug)){
@@ -1145,8 +1142,7 @@ exports.validarMovimiento = function(datos,callback){
                                 matriz: matriz, 
                                 turno: turno, 
                                 nivel: nivel,
-                                EstadoPartida: EstadoPartida, 
-                                EstadoSesion: EstadoSesion,
+                                EstadoPartida: EstadoPartida,
                                 PuntosP1: devuelveFichasPC(1).length,
                                 PuntosP2: devuelveFichasPC(2).length,
                                 ganador: ganador
@@ -1339,7 +1335,7 @@ exports.validarMovimiento = function(datos,callback){
             }
             
         }
-        else if(datos.tipo == 2){
+        else if(datos.tipo == 1){
             if(datos.jug == 1){
                 var lista = devuelveFichasPC(1);
                 if(lista.length > 0){
@@ -1413,7 +1409,7 @@ exports.validarMovimiento = function(datos,callback){
                                 if(fichasPC.length > 0){
                                     if(fichasJugadorXtienenJugada(fichasPC,2)){
                                         ///Juego de la computadora
-                                        posiblesJugadas(fichasPC);//Almacena las posibles jugadas de la PC
+                                        posiblesJugadas(fichasPC,2);//Almacena las posibles jugadas de la PC
                                         if (jugadas.length == 0){
                                             callback({
                                                 success: false,
@@ -1460,7 +1456,7 @@ exports.validarMovimiento = function(datos,callback){
                                                     console.log("x:"+jugadasTemp.fichas[x].x+", y:"+jugadasTemp.fichas[x].y);
                                                 }
                                                 jugadas=[];
-                                                posiblesJugadas2(jugadasTemp.fichas);
+                                                posiblesJugadas2(jugadasTemp.fichas,2);
                                                 if(jugadas.length>0){
                                                     jugadas=ordenarLista(jugadas);
                                                     

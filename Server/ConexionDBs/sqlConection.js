@@ -8,7 +8,7 @@ var Connection = require('tedious').Connection; // libreria necesaria para conec
 */
 var config = { // cambia cuando se monte en el servidor
     userName: 'sa',
-    password: '12345',
+    password: '86374844botas',
     server: 'localhost', // direccion del servidor
     options: {
         database: 'OthelloTEC',
@@ -151,7 +151,7 @@ exports.callProcedure = function callProcedure(request, callback) {
                 if (parameterName === 'success' && (value === 1 || value === true)) {
                     callback({
                         success: true,
-                        data: res[0],
+                        data: res,
                         error: 200
                     });
                 } else {
